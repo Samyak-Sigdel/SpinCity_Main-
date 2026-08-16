@@ -10,15 +10,19 @@ const Customers = () => {
   }, []);
 
   return (
-    <div className="p-8">
-      <h1 className="font-[Oswald] uppercase tracking-wide text-2xl text-[#14171F] mb-8">
+    <div className="p-5 md:p-8">
+      <p className="text-[11px] uppercase tracking-[0.25em] text-[#D6B36A]/80 mb-1">
+        Manage
+      </p>
+      <h1 className="font-serif text-2xl md:text-3xl text-white mb-8 md:mb-10">
         Customers
       </h1>
 
-      <div className="bg-white border border-[#E7E4DB] rounded-sm overflow-hidden">
+      {/* Desktop table */}
+      <div className="hidden md:block bg-[#181D21] border border-white/10 overflow-hidden">
         <table className="w-full text-sm">
           <thead>
-            <tr className="text-left text-[#5B6472] uppercase text-xs tracking-wide bg-[#FBFAF7]">
+            <tr className="text-left text-white/40 uppercase text-[11px] tracking-wide bg-white/[0.02]">
               <th className="px-5 py-3">Name</th>
               <th className="px-5 py-3">Email</th>
               <th className="px-5 py-3">Phone</th>
@@ -27,18 +31,36 @@ const Customers = () => {
           </thead>
           <tbody>
             {customers.map((customer) => (
-              <tr key={customer._id} className="border-t border-[#F0EEE7]">
-                <td className="px-5 py-3 text-[#14171F] font-medium">{customer.name}</td>
-                <td className="px-5 py-3 text-[#5B6472]">{customer.email}</td>
-                <td className="px-5 py-3 text-[#5B6472]">{customer.phone}</td>
-                <td className="px-5 py-3 text-[#5B6472]">{customer.address}</td>
+              <tr key={customer._id} className="border-t border-white/10">
+                <td className="px-5 py-3 text-white font-medium">{customer.name}</td>
+                <td className="px-5 py-3 text-white/60">{customer.email}</td>
+                <td className="px-5 py-3 text-white/60">{customer.phone}</td>
+                <td className="px-5 py-3 text-white/60">{customer.address}</td>
               </tr>
             ))}
           </tbody>
         </table>
 
         {customers.length === 0 && (
-          <p className="text-sm text-[#5B6472] p-8 text-center">No customers yet.</p>
+          <p className="text-sm text-white/40 p-8 text-center">No customers yet.</p>
+        )}
+      </div>
+
+      {/* Mobile cards */}
+      <div className="md:hidden flex flex-col gap-3">
+        {customers.map((customer) => (
+          <div key={customer._id} className="bg-[#181D21] border border-white/10 p-4">
+            <p className="text-white font-medium text-sm">{customer.name}</p>
+            <p className="text-white/50 text-xs mt-1">{customer.email}</p>
+            <p className="text-white/50 text-xs">{customer.phone}</p>
+            {customer.address && (
+              <p className="text-white/40 text-xs mt-1">{customer.address}</p>
+            )}
+          </div>
+        ))}
+
+        {customers.length === 0 && (
+          <p className="text-sm text-white/40 text-center py-12">No customers yet.</p>
         )}
       </div>
     </div>

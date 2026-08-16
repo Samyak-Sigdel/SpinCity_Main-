@@ -37,28 +37,31 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#F7F5F0] px-6">
+    <div className="min-h-screen flex items-center justify-center bg-[#0B0D0F] px-6">
       <div className="w-full max-w-sm">
-        <div className="text-center mb-8">
-          <span className="font-[Oswald] tracking-wide text-2xl text-[#14171F] uppercase">
-            Spin<span className="text-[#FFB020]">City</span>
+        <div className="text-center mb-10">
+          <span className="font-serif tracking-wide text-3xl text-white">
+            Spin <em className="italic text-[#D6B36A]">City</em>
           </span>
-          <p className="text-xs uppercase tracking-wide text-[#5B6472] mt-2">
+          <p className="text-[11px] uppercase tracking-[0.25em] text-white/40 mt-3">
             Admin Panel
           </p>
         </div>
 
         <form
           onSubmit={handleSubmit}
-          className="bg-white border border-[#E7E4DB] rounded-sm p-8 flex flex-col gap-4"
+          className="relative bg-[#181D21] border border-white/10 p-8 flex flex-col gap-4"
         >
+          <span className="pointer-events-none absolute -top-2.5 -left-2.5 w-5 h-5 border-t border-l border-[#D6B36A]/50" />
+          <span className="pointer-events-none absolute -bottom-2.5 -right-2.5 w-5 h-5 border-b border-r border-[#D6B36A]/50" />
+
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Admin email"
             required
-            className="border border-[#D8D5CC] rounded-sm px-4 py-3 text-sm focus:outline-none focus:border-[#FFB020]"
+            className="bg-transparent border border-white/15 px-4 py-3 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-[#D6B36A] transition-colors"
           />
           <input
             type="password"
@@ -66,12 +69,12 @@ const Login = () => {
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Password"
             required
-            className="border border-[#D8D5CC] rounded-sm px-4 py-3 text-sm focus:outline-none focus:border-[#FFB020]"
+            className="bg-transparent border border-white/15 px-4 py-3 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-[#D6B36A] transition-colors"
           />
           <button
             type="submit"
             disabled={loading}
-            className="mt-2 bg-[#14171F] text-[#F7F5F0] py-3 rounded-sm text-sm font-semibold tracking-wide hover:bg-[#252A36] transition-colors disabled:opacity-60"
+            className="mt-2 bg-[#D6B36A] text-[#0B0D0F] py-3 text-sm font-semibold uppercase tracking-wide hover:bg-[#E8C784] transition-colors disabled:opacity-50"
           >
             {loading ? "Signing in..." : "Log In"}
           </button>
