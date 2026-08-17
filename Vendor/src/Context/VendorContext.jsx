@@ -4,8 +4,7 @@ import { toast } from "react-toastify";
 
 export const VendorContext = createContext();
 
-// shared across AddVehicleForm and any filter UI
-export const VEHICLE_CATEGORIES = ["Car", "Motorbike", "Cycle"];
+export const VEHICLE_CATEGORIES = ["Scooter", "Motorbike", "Cycle"];
 
 const VendorContextProvider = (props) => {
   const backendUrl = import.meta.env.VITE_BACKENDURL;
@@ -14,6 +13,7 @@ const VendorContextProvider = (props) => {
     localStorage.getItem("vToken") ? localStorage.getItem("vToken") : false
   );
   const [vendorProfile, setVendorProfile] = useState(null);
+  const [dashboardStats, setDashboardStats] = useState(null);
 
   const getVendorProfile = async () => {
     try {
@@ -31,10 +31,27 @@ const VendorContextProvider = (props) => {
     }
   };
 
+  const getDashboardStats = async () => {
+    try {
+      const { data } = await axios.get(backendUrl + "/api/vendor/dashboard", {
+        headers: { vtoken: vToken },
+      });
+      if (data.success) {
+        setDashboardStats(data.dashData);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to load dashboard stats.");
+    }
+  };
+
   const logoutVendor = () => {
     localStorage.removeItem("vToken");
     setVToken(false);
     setVendorProfile(null);
+    setDashboardStats(null);
   };
 
   const value = {
@@ -43,13 +60,17 @@ const VendorContextProvider = (props) => {
     setVToken,
     vendorProfile,
     getVendorProfile,
+    dashboardStats,
+    getDashboardStats,
     logoutVendor,
   };
 
   useEffect(() => {
     if (vToken) {
       getVendorProfile();
+      getDashboardStats();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [vToken]);
 
   return (

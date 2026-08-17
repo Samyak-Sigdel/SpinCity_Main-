@@ -113,7 +113,7 @@ const updateVendorProfile = async (req, res) => {
 
 const addProduct = async (req, res) => {
   try {
-    const { name, category, pricePerDay, description, quantityTotal, address, lat, lng } = req.body;
+    const { name, category, pricePerDay, description, quantityTotal, address, lat, lng, isVisible } = req.body;
     const imageFile = req.files?.image?.[0];
     const documentFile = req.files?.document?.[0];
 
@@ -139,7 +139,7 @@ const addProduct = async (req, res) => {
     const imageUrl = imageUpload.secure_url;
 
     const documentUpload = await cloudinary.uploader.upload(documentFile.path, {
-      resource_type: "auto", // covers both image and PDF uploads of the bluebook
+      resource_type: "auto",
     });
     const documentUrl = documentUpload.secure_url;
 
@@ -153,11 +153,14 @@ const addProduct = async (req, res) => {
       owner: req.vendorId,
       quantityTotal: quantityTotal ? Number(quantityTotal) : 1,
       quantityAvailable: quantityTotal ? Number(quantityTotal) : 1,
+      // NEW: lets a vendor opt a vehicle out of the customer-facing listing
+      // right from creation; defaults to visible if not sent
+      isVisible: typeof isVisible !== "undefined" ? isVisible === "true" || isVisible === true : true,
       location: {
         address,
         coordinates: {
           type: "Point",
-          coordinates: [Number(lng), Number(lat)], // GeoJSON order: [longitude, latitude]
+          coordinates: [Number(lng), Number(lat)],
         },
       },
     };
@@ -172,7 +175,6 @@ const addProduct = async (req, res) => {
   }
 };
 
-// list only the logged-in vendor's products
 const vendorProducts = async (req, res) => {
   try {
     const products = await productModel.find({ owner: req.vendorId });
@@ -185,7 +187,7 @@ const vendorProducts = async (req, res) => {
 
 const updateProduct = async (req, res) => {
   try {
-    const { productId, name, category, pricePerDay, description, quantityTotal, status, address, lat, lng } = req.body;
+    const { productId, name, category, pricePerDay, description, quantityTotal, status, address, lat, lng, isVisible } = req.body;
 
     if (!mongoose.Types.ObjectId.isValid(productId)) {
       return res.json({ success: false, message: "Invalid product ID" });
@@ -216,6 +218,11 @@ const updateProduct = async (req, res) => {
     if (description) product.description = description;
     if (quantityTotal) product.quantityTotal = Number(quantityTotal);
     if (status) product.status = status;
+    // NEW: vendor-controlled visibility toggle, editable independently of
+    // any other field (e.g. a simple switch in the vehicle list/edit modal)
+    if (typeof isVisible !== "undefined") {
+      product.isVisible = isVisible === "true" || isVisible === true;
+    }
     if (address && lat && lng) {
       product.location = {
         address,
@@ -261,7 +268,6 @@ const removeProduct = async (req, res) => {
 
 // ---------------- Bookings ----------------
 
-// all bookings made against this vendor's products
 const vendorBookings = async (req, res) => {
   try {
     const bookings = await bookingModel
@@ -277,7 +283,6 @@ const vendorBookings = async (req, res) => {
   }
 };
 
-// vendor confirms, activates, completes, or cancels a booking
 const updateBookingStatus = async (req, res) => {
   try {
     const { bookingId, status } = req.body;
@@ -295,7 +300,6 @@ const updateBookingStatus = async (req, res) => {
     booking.status = status;
     await booking.save();
 
-    // return the reserved stock to the product if cancelled
     if (status === "Cancelled") {
       await productModel.findByIdAndUpdate(booking.product, {
         $inc: { quantityAvailable: booking.quantity },
@@ -314,18 +318,29 @@ const updateBookingStatus = async (req, res) => {
 const vendorDashboard = async (req, res) => {
   try {
     const products = await productModel.find({ owner: req.vendorId });
-    const bookings = await bookingModel.find({ vendor: req.vendorId });
+    const bookings = await bookingModel
+      .find({ vendor: req.vendorId })
+      .populate("customer", "name email phone")
+      .populate("product", "name image")
+      .sort({ createdAt: -1 });
 
-    const earnings = bookings
-      .filter((b) => b.paymentStatus === "Paid")
+    const paidBookings = bookings.filter((b) => b.paymentStatus === "Paid");
+    const earnings = paidBookings.reduce((sum, b) => sum + b.totalPrice, 0);
+
+    const startOfToday = new Date();
+    startOfToday.setHours(0, 0, 0, 0);
+    const todayEarnings = paidBookings
+      .filter((b) => new Date(b.updatedAt) >= startOfToday)
       .reduce((sum, b) => sum + b.totalPrice, 0);
 
     const dashData = {
       totalProducts: products.length,
       totalBookings: bookings.length,
       pendingBookings: bookings.filter((b) => b.status === "Pending").length,
+      activeRentals: bookings.filter((b) => b.status === "Active").length,
       earnings,
-      latestBookings: bookings.slice(-5).reverse(),
+      todayEarnings,
+      latestBookings: bookings.slice(0, 5),
     };
 
     res.json({ success: true, dashData });

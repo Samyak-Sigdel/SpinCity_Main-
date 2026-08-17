@@ -11,8 +11,9 @@ const AddVehicleForm = ({ onAdded }) => {
   const [imageFile, setImageFile] = useState(null);
   const [documentFile, setDocumentFile] = useState(null);
   const [documentName, setDocumentName] = useState("");
-  const [location, setLocation] = useState(null); // { address, lat, lon }
+  const [location, setLocation] = useState(null);
   const [locationModalOpen, setLocationModalOpen] = useState(false);
+  const [isVisible, setIsVisible] = useState(true);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -71,6 +72,7 @@ const AddVehicleForm = ({ onAdded }) => {
       payload.append("address", location.address);
       payload.append("lat", location.lat);
       payload.append("lng", location.lon);
+      payload.append("isVisible", isVisible);
 
       const { data } = await axios.post(
         backendUrl + "/api/vendor/add-product",
@@ -92,6 +94,7 @@ const AddVehicleForm = ({ onAdded }) => {
         setDocumentFile(null);
         setDocumentName("");
         setLocation(null);
+        setIsVisible(true);
         onAdded && onAdded();
       } else {
         toast.error(data.message);
@@ -105,7 +108,7 @@ const AddVehicleForm = ({ onAdded }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-xl flex flex-col gap-5">
+    <form onSubmit={handleSubmit} className="w-full flex flex-col gap-5">
       <div>
         <label className="block text-[10px] uppercase tracking-[0.18em] text-[#858B91] mb-2">
           Vehicle photo
@@ -270,6 +273,30 @@ const AddVehicleForm = ({ onAdded }) => {
           className="w-full bg-[#181D21] border border-white/10 text-[#F5F3EE] placeholder:text-[#70767C] px-4 py-3 text-sm focus:outline-none focus:border-[#D6B36A]"
         />
       </div>
+
+      <label className="flex items-center justify-between gap-4 border border-white/10 bg-[#181D21] px-4 h-[54px] cursor-pointer">
+        <div>
+          <p className="text-sm text-[#F5F3EE]">List on customer page</p>
+          <p className="text-xs text-[#70767C] mt-0.5">
+            Turn off to keep this vehicle out of customer search once approved.
+          </p>
+        </div>
+        <button
+          type="button"
+          role="switch"
+          aria-checked={isVisible}
+          onClick={() => setIsVisible((v) => !v)}
+          className={`relative w-11 h-6 shrink-0 transition-colors ${
+            isVisible ? "bg-[#D6B36A]" : "bg-white/15"
+          }`}
+        >
+          <span
+            className={`absolute top-0.5 left-0.5 w-5 h-5 bg-[#0B0D0F] transition-transform ${
+              isVisible ? "translate-x-5" : "translate-x-0"
+            }`}
+          />
+        </button>
+      </label>
 
       <button
         type="submit"

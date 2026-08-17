@@ -4,12 +4,10 @@ const productSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
     category: { type: String, required: true },
-    pricePerDay: { type: Number, required: true }, // Rental rate per day
-    image: { type: String, required: true }, // Path or URL of the image
+    pricePerDay: { type: Number, required: true },
+    image: { type: String, required: true },
     description: { type: String, required: true },
 
-    // proof of ownership/registration (bluebook), required for admin verification —
-    // not shown to customers, only visible in the admin panel
     vehicleDocument: { type: String, required: true },
 
     owner: {
@@ -19,7 +17,7 @@ const productSchema = new mongoose.Schema(
     },
 
     quantityTotal: { type: Number, required: true },
-    quantityAvailable: { type: Number, required: true},
+    quantityAvailable: { type: Number, required: true },
 
     status: {
       type: String,
@@ -30,7 +28,10 @@ const productSchema = new mongoose.Schema(
     // vehicle stays hidden from public listings until an admin approves it
     isApproved: { type: Boolean, default: false },
 
-    // pickup location, used for "Where" search on the customer app
+    // NEW: vendor-controlled visibility — lets a vendor hide an approved
+    // vehicle from the customer app without deleting or unapproving it
+    isVisible: { type: Boolean, default: true },
+
     location: {
       address: { type: String, required: true },
       coordinates: {
@@ -40,7 +41,7 @@ const productSchema = new mongoose.Schema(
           default: "Point",
         },
         coordinates: {
-          type: [Number], // [longitude, latitude]
+          type: [Number],
           required: true,
         },
       },
@@ -49,7 +50,6 @@ const productSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// enables $near / $geoWithin queries for the "Where" search on the customer app
 productSchema.index({ "location.coordinates": "2dsphere" });
 
 const productModel =

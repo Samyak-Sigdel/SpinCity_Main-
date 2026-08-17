@@ -109,7 +109,9 @@ const listProducts = async (req, res) => {
   try {
     const { category, search, lat, lng, radius } = req.query;
 
-    const matchStage = { status: "Available", isApproved: true };
+    // NEW: isVisible must be true too — a vendor can approve-and-hide a
+    // vehicle (e.g. seasonal pause) without it showing up here
+    const matchStage = { status: "Available", isApproved: true, isVisible: true };
     if (category) matchStage.category = category;
     if (search) matchStage.name = { $regex: search, $options: "i" };
 
