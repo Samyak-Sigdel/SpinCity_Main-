@@ -1,3 +1,4 @@
+// LocationSearch.jsx
 import React, { useState, useRef } from "react";
 import axios from "axios";
 
@@ -66,18 +67,18 @@ const LocationSearch = ({ placeholder = "City, address, area...", onSelect, init
         onFocus={() => query.length >= 3 && setShowDropdown(true)}
         onBlur={() => setTimeout(() => setShowDropdown(false), 150)}
         placeholder={placeholder}
-        className="w-full h-[54px] bg-[#181D21] border border-white/10 text-[#F5F3EE] placeholder:text-[#70767C] px-4 text-sm focus:outline-none focus:border-[#D6B36A] transition-colors"
+        className="w-full h-[54px] bg-[#F7F5EF] border border-[#E5E1D8] rounded text-[#172033] placeholder:text-[#98A2B3] px-4 text-sm focus:outline-none focus:border-[#BFA05A] focus:bg-white transition-colors"
       />
 
       {showDropdown && query.length >= 3 && (
-        <div className="absolute left-0 right-0 top-full mt-2 bg-[#101417] border border-white/10 shadow-2xl z-50 max-h-64 overflow-y-auto">
+        <div className="absolute left-0 right-0 top-full mt-2 bg-white border border-[#E5E1D8] rounded-lg shadow-[0_8px_24px_rgba(23,32,51,0.10)] z-50 max-h-64 overflow-y-auto">
           {loading && (
-            <p className="px-4 py-3 text-xs text-[#858B91] uppercase tracking-[0.15em]">
+            <p className="px-4 py-3 text-xs text-[#667085] uppercase tracking-[0.15em]">
               Searching...
             </p>
           )}
           {!loading && suggestions.length === 0 && (
-            <p className="px-4 py-3 text-xs text-[#858B91] uppercase tracking-[0.15em]">
+            <p className="px-4 py-3 text-xs text-[#667085] uppercase tracking-[0.15em]">
               No locations found
             </p>
           )}
@@ -87,7 +88,7 @@ const LocationSearch = ({ placeholder = "City, address, area...", onSelect, init
                 key={place.place_id}
                 type="button"
                 onMouseDown={() => handleSelect(place)}
-                className="w-full text-left px-4 py-3 text-sm text-[#F5F3EE] hover:bg-white/5 border-b border-white/5 last:border-b-0 transition-colors"
+                className="w-full text-left px-4 py-3 text-sm text-[#172033] hover:bg-[#F7F5EF] border-b border-[#E5E1D8] last:border-b-0 transition-colors"
               >
                 {place.display_name}
               </button>

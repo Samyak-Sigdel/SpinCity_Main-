@@ -15,15 +15,15 @@ const COUNTRIES = ["Nepal", "India", "United States", "United Kingdom", "China",
 
 const Field = ({ label, children, required = true }) => (
   <div>
-    <label className="block text-sm font-medium text-[#14171F] mb-1.5">
-      {label} {required && <span className="text-[#B03636]">*</span>}
+    <label className="block text-sm font-medium text-[#172033] mb-1.5">
+      {label} {required && <span className="text-[#C75C5C]">*</span>}
     </label>
     {children}
   </div>
 );
 
 const CheckIcon = () => (
-  <span className="w-5 h-5 rounded-full bg-[#2F6F5E] flex items-center justify-center shrink-0">
+  <span className="w-5 h-5 rounded-full bg-[#3E8B73] flex items-center justify-center shrink-0">
     <svg width="11" height="11" viewBox="0 0 11 11" fill="none">
       <path d="M1.5 5.5l2.5 2.5 5.5-5.5" stroke="white" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
@@ -32,7 +32,7 @@ const CheckIcon = () => (
 
 const Checkout = () => {
   const { productId } = useParams();
-  const { state } = useLocation(); // { startDate, endDate, quantity }
+  const { state } = useLocation();
   const navigate = useNavigate();
   const { backendUrl, token } = useContext(CustomerContext);
 
@@ -156,282 +156,296 @@ const Checkout = () => {
   };
 
   if (loading) {
-    return <p className="text-sm text-[#5B6472] p-8 text-center">Loading...</p>;
+    return (
+      <div className="bg-[#F7F5EF] min-h-screen">
+        <p className="text-sm text-[#667085] p-8 text-center">Loading...</p>
+      </div>
+    );
   }
 
   if (!vehicle) {
-    return <p className="text-sm text-[#5B6472] p-8 text-center">Vehicle not found.</p>;
+    return (
+      <div className="bg-[#F7F5EF] min-h-screen">
+        <p className="text-sm text-[#667085] p-8 text-center">Vehicle not found.</p>
+      </div>
+    );
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-5 md:px-8 py-12 grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8">
-      {/* Driver details form */}
-      <div>
-        <Link to={`/vehicles/${productId}`} className="text-xs text-[#5B6472] hover:text-[#14171F]">
-          ← Back to vehicle
-        </Link>
+    <div className="bg-[#F7F5EF] min-h-screen">
+      <div className="max-w-6xl mx-auto px-5 md:px-8 py-12 grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8">
 
-        <form onSubmit={handleSubmit} className="bg-white border border-[#E7E4DB] rounded-sm p-6 mt-4">
-          <div className="flex items-center justify-between mb-1">
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-[#B03636]" />
-              <h1 className="font-[Oswald] uppercase tracking-wide text-lg text-[#14171F]">
-                Driver Details
-              </h1>
+        {/* Driver details form */}
+        <div>
+          <Link to={`/vehicles/${productId}`} className="text-xs text-[#667085] hover:text-[#172033]">
+            ← Back to vehicle
+          </Link>
+
+          <form
+            onSubmit={handleSubmit}
+            className="bg-white border border-[#E5E1D8] rounded-[8px] shadow-[0_2px_8px_rgba(23,32,51,0.06)] p-6 mt-4"
+          >
+            <div className="flex items-center justify-between mb-1">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-[#C9A24D]" />
+                <h1 className="font-serif text-lg font-semibold text-[#172033]">
+                  Driver Details
+                </h1>
+              </div>
+              <span className="text-xs text-[#667085]">As shown on driver's license</span>
             </div>
-            <span className="text-xs text-[#5B6472]">As shown on driver's license</span>
-          </div>
-          <div className="border-t border-[#E7E4DB] my-4" />
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <Field label="First name">
-              <div className="relative">
-                <input
-                  name="firstName"
-                  value={formData.firstName}
-                  onChange={handleChange}
-                  required
-                  className="w-full border border-[#D8D5CC] rounded-sm px-4 py-3 pr-10 text-sm focus:outline-none focus:border-[#FFB020]"
-                />
-                {formData.firstName && (
-                  <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                    <CheckIcon />
-                  </div>
-                )}
-              </div>
-            </Field>
-
-            <Field label="Last name">
-              <div className="relative">
-                <input
-                  name="lastName"
-                  value={formData.lastName}
-                  onChange={handleChange}
-                  required
-                  className="w-full border border-[#D8D5CC] rounded-sm px-4 py-3 pr-10 text-sm focus:outline-none focus:border-[#FFB020]"
-                />
-                {formData.lastName && (
-                  <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                    <CheckIcon />
-                  </div>
-                )}
-              </div>
-            </Field>
-
-            <Field label="Email address">
-              <div className="relative">
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                  className="w-full border border-[#D8D5CC] rounded-sm px-4 py-3 pr-10 text-sm focus:outline-none focus:border-[#FFB020]"
-                />
-                {formData.email && (
-                  <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                    <CheckIcon />
-                  </div>
-                )}
-              </div>
-              <p className="text-xs text-[#5B6472] mt-1">
-                Your booking confirmation will be sent here.
-              </p>
-            </Field>
-
-            <Field label="Confirm email">
-              <div className="relative">
-                <input
-                  type="email"
-                  name="confirmEmail"
-                  value={formData.confirmEmail}
-                  onChange={handleChange}
-                  required
-                  className="w-full border border-[#D8D5CC] rounded-sm px-4 py-3 pr-10 text-sm focus:outline-none focus:border-[#FFB020]"
-                />
-                {formData.confirmEmail &&
-                  formData.confirmEmail === formData.email && (
-                    <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                      <CheckIcon />
-                    </div>
-                  )}
-              </div>
-            </Field>
-          </div>
-
-          <div className="mt-4">
-            <Field label="Phone">
-              <div className="flex gap-2">
-                <select
-                  name="countryCode"
-                  value={formData.countryCode}
-                  onChange={handleChange}
-                  className="border border-[#D8D5CC] rounded-sm px-3 py-3 text-sm focus:outline-none focus:border-[#FFB020] bg-white"
-                >
-                  {COUNTRY_CODES.map((c) => (
-                    <option key={c.code} value={c.code}>
-                      {c.flag} {c.code}
-                    </option>
-                  ))}
-                </select>
-                <input
-                  type="tel"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleChange}
-                  required
-                  placeholder="Phone Number *"
-                  className="flex-1 border border-[#D8D5CC] rounded-sm px-4 py-3 text-sm focus:outline-none focus:border-[#FFB020]"
-                />
-              </div>
-            </Field>
-          </div>
-
-          {/* Age + residence, plus license upload */}
-          <div className="mt-5 bg-[#EEF3FA] border border-[#D6E3F3] rounded-sm p-4">
-            <p className="text-xs text-[#2F5E8F] flex items-start gap-2 mb-4">
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="mt-0.5 shrink-0">
-                <circle cx="7" cy="7" r="6" stroke="#2F5E8F" strokeWidth="1.2" />
-                <path d="M7 6.3v3.5M7 4.3v.3" stroke="#2F5E8F" strokeWidth="1.2" strokeLinecap="round" />
-              </svg>
-              These details affect pricing and availability. Changes may require a new search.
-            </p>
+            <div className="border-t border-[#E5E1D8] my-4" />
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <Field label="Driver's age">
+              <Field label="First name">
                 <div className="relative">
                   <input
-                    type="number"
-                    name="age"
-                    min="18"
-                    value={formData.age}
+                    name="firstName"
+                    value={formData.firstName}
                     onChange={handleChange}
                     required
-                    className="w-full border border-[#D8D5CC] rounded-sm px-4 py-3 pr-10 text-sm focus:outline-none focus:border-[#FFB020] bg-white"
+                    className="w-full border border-[#E5E1D8] rounded-[4px] px-4 py-3 pr-10 text-sm focus:outline-none focus:border-[#C9A24D]"
                   />
-                  {formData.age && Number(formData.age) >= 18 && (
+                  {formData.firstName && (
                     <div className="absolute right-3 top-1/2 -translate-y-1/2">
                       <CheckIcon />
                     </div>
                   )}
                 </div>
-                <p className="text-xs text-[#5B6472] mt-1">
-                  Out-of-range ages may not be available at this location.
+              </Field>
+
+              <Field label="Last name">
+                <div className="relative">
+                  <input
+                    name="lastName"
+                    value={formData.lastName}
+                    onChange={handleChange}
+                    required
+                    className="w-full border border-[#E5E1D8] rounded-[4px] px-4 py-3 pr-10 text-sm focus:outline-none focus:border-[#C9A24D]"
+                  />
+                  {formData.lastName && (
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                      <CheckIcon />
+                    </div>
+                  )}
+                </div>
+              </Field>
+
+              <Field label="Email address">
+                <div className="relative">
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
+                    className="w-full border border-[#E5E1D8] rounded-[4px] px-4 py-3 pr-10 text-sm focus:outline-none focus:border-[#C9A24D]"
+                  />
+                  {formData.email && (
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                      <CheckIcon />
+                    </div>
+                  )}
+                </div>
+                <p className="text-xs text-[#667085] mt-1">
+                  Your booking confirmation will be sent here.
                 </p>
               </Field>
 
-              <Field label="Country of residence">
-                <select
-                  name="countryOfResidence"
-                  value={formData.countryOfResidence}
-                  onChange={handleChange}
-                  className="w-full border border-[#D8D5CC] rounded-sm px-4 py-3 text-sm focus:outline-none focus:border-[#FFB020] bg-white"
-                >
-                  {COUNTRIES.map((c) => (
-                    <option key={c} value={c}>
-                      {c}
-                    </option>
-                  ))}
-                </select>
-                <p className="text-xs text-[#5B6472] mt-1">
-                  Affects taxes, age policy, and license requirements.
-                </p>
+              <Field label="Confirm email">
+                <div className="relative">
+                  <input
+                    type="email"
+                    name="confirmEmail"
+                    value={formData.confirmEmail}
+                    onChange={handleChange}
+                    required
+                    className="w-full border border-[#E5E1D8] rounded-[4px] px-4 py-3 pr-10 text-sm focus:outline-none focus:border-[#C9A24D]"
+                  />
+                  {formData.confirmEmail &&
+                    formData.confirmEmail === formData.email && (
+                      <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                        <CheckIcon />
+                      </div>
+                    )}
+                </div>
               </Field>
             </div>
 
             <div className="mt-4">
-              <Field label="Driver's license photo">
-                <label
-                  htmlFor="license-image"
-                  className="flex items-center justify-center w-full h-32 border border-dashed border-[#B7C9E3] rounded-sm cursor-pointer overflow-hidden bg-white hover:border-[#2F5E8F] transition-colors"
-                >
-                  {licensePreview ? (
-                    <img
-                      src={licensePreview}
-                      alt="License preview"
-                      className="h-full w-full object-cover"
-                    />
-                  ) : (
-                    <span className="text-sm text-[#5B6472]">
-                      Click to upload a clear photo of your license
-                    </span>
-                  )}
-                </label>
-                <input
-                  id="license-image"
-                  type="file"
-                  accept="image/*"
-                  onChange={handleLicenseChange}
-                  className="hidden"
-                />
-                <p className="text-xs text-[#5B6472] mt-1">
-                  Used only to verify your eligibility to drive — kept private.
-                </p>
+              <Field label="Phone">
+                <div className="flex gap-2">
+                  <select
+                    name="countryCode"
+                    value={formData.countryCode}
+                    onChange={handleChange}
+                    className="border border-[#E5E1D8] rounded-[4px] px-3 py-3 text-sm focus:outline-none focus:border-[#C9A24D] bg-white"
+                  >
+                    {COUNTRY_CODES.map((c) => (
+                      <option key={c.code} value={c.code}>
+                        {c.flag} {c.code}
+                      </option>
+                    ))}
+                  </select>
+                  <input
+                    type="tel"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    required
+                    placeholder="Phone Number *"
+                    className="flex-1 border border-[#E5E1D8] rounded-[4px] px-4 py-3 text-sm focus:outline-none focus:border-[#C9A24D]"
+                  />
+                </div>
               </Field>
             </div>
+
+            {/* Age + residence, plus license upload */}
+            <div className="mt-5 bg-[#F5E9C9]/30 border border-[#E5E1D8] rounded-[8px] p-4">
+              <p className="text-xs text-[#344054] flex items-start gap-2 mb-4">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="mt-0.5 shrink-0">
+                  <circle cx="7" cy="7" r="6" stroke="#C9A24D" strokeWidth="1.2" />
+                  <path d="M7 6.3v3.5M7 4.3v.3" stroke="#C9A24D" strokeWidth="1.2" strokeLinecap="round" />
+                </svg>
+                These details affect pricing and availability. Changes may require a new search.
+              </p>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <Field label="Driver's age">
+                  <div className="relative">
+                    <input
+                      type="number"
+                      name="age"
+                      min="18"
+                      value={formData.age}
+                      onChange={handleChange}
+                      required
+                      className="w-full border border-[#E5E1D8] rounded-[4px] px-4 py-3 pr-10 text-sm focus:outline-none focus:border-[#C9A24D] bg-white"
+                    />
+                    {formData.age && Number(formData.age) >= 18 && (
+                      <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                        <CheckIcon />
+                      </div>
+                    )}
+                  </div>
+                  <p className="text-xs text-[#667085] mt-1">
+                    Out-of-range ages may not be available at this location.
+                  </p>
+                </Field>
+
+                <Field label="Country of residence">
+                  <select
+                    name="countryOfResidence"
+                    value={formData.countryOfResidence}
+                    onChange={handleChange}
+                    className="w-full border border-[#E5E1D8] rounded-[4px] px-4 py-3 text-sm focus:outline-none focus:border-[#C9A24D] bg-white"
+                  >
+                    {COUNTRIES.map((c) => (
+                      <option key={c} value={c}>
+                        {c}
+                      </option>
+                    ))}
+                  </select>
+                  <p className="text-xs text-[#667085] mt-1">
+                    Affects taxes, age policy, and license requirements.
+                  </p>
+                </Field>
+              </div>
+
+              <div className="mt-4">
+                <Field label="Driver's license photo">
+                  <label
+                    htmlFor="license-image"
+                    className="flex items-center justify-center w-full h-32 border border-dashed border-[#C9A24D]/50 rounded-[4px] cursor-pointer overflow-hidden bg-white hover:border-[#C9A24D] transition-colors"
+                  >
+                    {licensePreview ? (
+                      <img
+                        src={licensePreview}
+                        alt="License preview"
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      <span className="text-sm text-[#667085]">
+                        Click to upload a clear photo of your license
+                      </span>
+                    )}
+                  </label>
+                  <input
+                    id="license-image"
+                    type="file"
+                    accept="image/*"
+                    onChange={handleLicenseChange}
+                    className="hidden"
+                  />
+                  <p className="text-xs text-[#667085] mt-1">
+                    Used only to verify your eligibility to drive — kept private.
+                  </p>
+                </Field>
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              disabled={submitting}
+              className="mt-6 w-full bg-[#C9A24D] text-[#172033] py-3.5 rounded-[4px] text-sm font-semibold uppercase tracking-[0.06em] hover:brightness-95 transition-all disabled:opacity-60"
+            >
+              {submitting ? "Confirming Booking..." : "Continue"}
+            </button>
+          </form>
+        </div>
+
+        {/* Trip summary */}
+        <div>
+          <div className="border border-[#E5E1D8] rounded-[8px] bg-white shadow-[0_8px_24px_rgba(23,32,51,0.10)] p-6 sticky top-24">
+            <div className="flex gap-3">
+              <div className="w-20 h-16 rounded-[4px] overflow-hidden bg-[#F7F5EF] shrink-0">
+                <img src={vehicle.image} alt={vehicle.name} className="w-full h-full object-cover" />
+              </div>
+              <div className="min-w-0">
+                <p className="text-sm font-semibold text-[#172033] truncate">{vehicle.name}</p>
+                <p className="text-xs text-[#667085]">{vehicle.category}</p>
+              </div>
+            </div>
+
+            <div className="border-t border-[#E5E1D8] my-4" />
+
+            <p className="text-2xl font-semibold text-[#172033]">
+              Rs. {estimatedTotal}
+              <span className="text-sm text-[#667085] font-normal"> total</span>
+            </p>
+            <p className="text-xs text-[#667085] mt-1">Before taxes</p>
+
+            <div className="border-t border-[#E5E1D8] my-4" />
+
+            <h3 className="text-sm font-semibold text-[#172033] mb-3">Your trip</h3>
+
+            <div className="text-xs text-[#667085] space-y-2">
+              <div className="flex justify-between">
+                <span>Trip start</span>
+                <span className="text-[#172033] font-medium">
+                  {state?.startDate && new Date(state.startDate).toLocaleDateString()}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span>Trip end</span>
+                <span className="text-[#172033] font-medium">
+                  {state?.endDate && new Date(state.endDate).toLocaleDateString()}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span>Duration</span>
+                <span className="text-[#172033] font-medium">{totalDays} day(s)</span>
+              </div>
+            </div>
+
+            {vehicle.location?.address && (
+              <>
+                <div className="border-t border-[#E5E1D8] my-4" />
+                <h3 className="text-sm font-semibold text-[#172033] mb-2">Pickup & return</h3>
+                <p className="text-xs text-[#667085]">{vehicle.location.address}</p>
+              </>
+            )}
           </div>
-
-          <button
-            type="submit"
-            disabled={submitting}
-            className="mt-6 w-full bg-[#14171F] text-[#F7F5F0] py-3.5 rounded-sm text-sm font-semibold tracking-wide hover:bg-[#252A36] transition-colors disabled:opacity-60"
-          >
-            {submitting ? "Confirming Booking..." : "Continue"}
-          </button>
-        </form>
-      </div>
-
-      {/* Trip summary */}
-      <div>
-        <div className="border border-[#E7E4DB] rounded-sm bg-white p-6 sticky top-24">
-          <div className="flex gap-3">
-            <div className="w-20 h-16 rounded-sm overflow-hidden bg-[#F0EEE7] shrink-0">
-              <img src={vehicle.image} alt={vehicle.name} className="w-full h-full object-cover" />
-            </div>
-            <div className="min-w-0">
-              <p className="text-sm font-semibold text-[#14171F] truncate">{vehicle.name}</p>
-              <p className="text-xs text-[#5B6472]">{vehicle.category}</p>
-            </div>
-          </div>
-
-          <div className="border-t border-[#F0EEE7] my-4" />
-
-          <p className="text-2xl font-semibold text-[#14171F]">
-            Rs. {estimatedTotal}
-            <span className="text-sm text-[#5B6472] font-normal"> total</span>
-          </p>
-          <p className="text-xs text-[#5B6472] mt-1">Before taxes</p>
-
-          <div className="border-t border-[#F0EEE7] my-4" />
-
-          <h3 className="text-sm font-semibold text-[#14171F] mb-3">Your trip</h3>
-
-          <div className="text-xs text-[#5B6472] space-y-2">
-            <div className="flex justify-between">
-              <span>Trip start</span>
-              <span className="text-[#14171F] font-medium">
-                {state?.startDate && new Date(state.startDate).toLocaleDateString()}
-              </span>
-            </div>
-            <div className="flex justify-between">
-              <span>Trip end</span>
-              <span className="text-[#14171F] font-medium">
-                {state?.endDate && new Date(state.endDate).toLocaleDateString()}
-              </span>
-            </div>
-            <div className="flex justify-between">
-              <span>Duration</span>
-              <span className="text-[#14171F] font-medium">{totalDays} day(s)</span>
-            </div>
-          </div>
-
-          {vehicle.location?.address && (
-            <>
-              <div className="border-t border-[#F0EEE7] my-4" />
-              <h3 className="text-sm font-semibold text-[#14171F] mb-2">Pickup & return</h3>
-              <p className="text-xs text-[#5B6472]">{vehicle.location.address}</p>
-            </>
-          )}
         </div>
       </div>
     </div>

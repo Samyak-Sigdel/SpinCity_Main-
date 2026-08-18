@@ -1,3 +1,4 @@
+// VehiclesPage.jsx
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import VehicleList from "../Components/VehicleList";
@@ -10,10 +11,10 @@ const VehiclesPage = () => {
   return (
     <div>
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-        <h2 className="font-serif text-xl text-[#F5F3EE]">My Vehicles</h2>
+        <h2 className="font-serif text-xl text-[#172033]">My Vehicles</h2>
         <Link
           to="/vehicles/add"
-          className="h-[46px] px-5 inline-flex items-center justify-center bg-[#D6B36A] hover:bg-[#E5C783] text-[#0B0D0F] text-[11px] font-semibold uppercase tracking-[0.18em] transition-colors"
+          className="h-[44px] px-5 inline-flex items-center justify-center bg-[#BFA05A] hover:bg-[#AC8D48] text-[#172033] text-[13px] font-semibold uppercase tracking-[0.15em] rounded transition-colors"
         >
           + Add Vehicle
         </Link>
@@ -24,12 +25,12 @@ const VehiclesPage = () => {
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           placeholder="Search vehicles..."
-          className="h-[46px] flex-1 bg-[#181D21] border border-white/10 text-[#F5F3EE] placeholder:text-[#70767C] px-4 text-sm focus:outline-none focus:border-[#D6B36A]"
+          className="h-[46px] flex-1 bg-[#F7F5EF] border border-[#E5E1D8] rounded text-[#172033] placeholder:text-[#98A2B3] px-4 text-sm focus:outline-none focus:border-[#BFA05A] focus:bg-white transition-colors"
         />
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
-          className="h-[46px] bg-[#181D21] border border-white/10 text-[#F5F3EE] px-4 text-sm focus:outline-none focus:border-[#D6B36A] [color-scheme:dark]"
+          className="h-[46px] bg-[#F7F5EF] border border-[#E5E1D8] rounded text-[#172033] px-4 text-sm focus:outline-none focus:border-[#BFA05A] focus:bg-white transition-colors"
         >
           {["All", "Available", "Rented", "Maintenance", "Inactive"].map((s) => (
             <option key={s} value={s}>{s === "All" ? "All statuses" : s}</option>

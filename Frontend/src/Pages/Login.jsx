@@ -10,7 +10,7 @@ const HERO_IMAGE_URL =
 const Login = () => {
   const navigate = useNavigate();
   const { backendUrl, setToken } = useContext(CustomerContext);
-  const [mode, setMode] = useState("login"); // "login" | "register"
+  const [mode, setMode] = useState("login");
   const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -54,97 +54,72 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen w-full flex bg-[#0B0D0F]">
+    <div className="min-h-screen w-full flex bg-[#F7F5EF]">
 
-      {/* ── Left panel — editorial image ── */}
-      <div className="hidden lg:block lg:w-1/2 relative overflow-hidden bg-[#111519]">
+      {/* Left panel — image */}
+      <div className="hidden lg:block lg:w-1/2 relative overflow-hidden bg-[#172033]">
         <img
           src={HERO_IMAGE_URL}
-          alt="Spin City"
-          className="absolute inset-0 w-full h-full object-cover object-center"
+          alt="SpinCity"
+          className="absolute inset-0 w-full h-full object-cover object-center opacity-90"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0B0D0F] via-[#0B0D0F]/30 to-[#0B0D0F]/10" />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#0B0D0F]/40 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#172033] via-[#172033]/20 to-transparent" />
 
-        {/* Route line motif */}
-        <svg
-          className="absolute left-12 top-12 h-[420px] w-[40px] pointer-events-none opacity-70"
-          viewBox="0 0 40 420"
-          fill="none"
-        >
-          <path
-            d="M20 0 V300 Q20 340 60 340"
-            stroke="#D6B36A"
-            strokeOpacity="0.55"
-            strokeWidth="1.5"
-            strokeDasharray="6 8"
-          />
-          <circle cx="20" cy="4" r="4" fill="#D6B36A" />
-        </svg>
-
-        {/* Brand mark on image */}
         <div className="absolute bottom-12 left-12 flex flex-col gap-3">
           <div className="flex items-center gap-3">
-            <span className="w-8 h-px bg-[#D6B36A]" />
-            <p className="text-[10px] uppercase tracking-[0.3em] text-[#D6B36A]">
-              Spin City · Kathmandu
+            <span className="w-8 h-px bg-[#C9A24D]" />
+            <p className="text-[10px] uppercase tracking-[0.3em] text-[#C9A24D]">
+              SpinCity · Kathmandu
             </p>
           </div>
-          <h2 className="font-serif text-4xl md:text-5xl font-light text-[#F5F3EE] leading-[0.98] tracking-tight">
-            Find Your <br />
-            <span className="text-[#D6B36A] italic font-normal">Perfect Ride.</span>
+          <h2 className="font-serif text-4xl md:text-5xl font-semibold text-white leading-[1.05]">
+            Find your <br />
+            <span className="text-[#C9A24D]">perfect ride.</span>
           </h2>
         </div>
       </div>
 
-      {/* ── Right panel — form ── */}
-      <div className="w-full lg:w-1/2 flex flex-col justify-between px-8 sm:px-16 py-12 bg-[#0B0D0F]">
+      {/* Right panel — form */}
+      <div className="w-full lg:w-1/2 flex flex-col justify-between px-8 sm:px-16 py-12">
 
-        {/* Top nav */}
         <div className="flex items-center justify-between mb-16">
-          <Link
-            to="/"
-            className="text-sm tracking-[0.2em] uppercase font-medium text-[#F5F3EE] hover:text-[#D6B36A] transition-colors"
-          >
-            Spin City
+          <Link to="/" className="font-serif text-xl font-semibold text-[#172033]">
+            Spin<span className="text-[#C9A24D]">City</span>
           </Link>
           <Link
             to="/vehicles"
-            className="text-xs uppercase tracking-[0.15em] text-[#70767C] hover:text-[#D6B36A] transition-colors font-light"
+            className="text-xs uppercase tracking-[0.15em] text-[#667085] hover:text-[#C9A24D] transition-colors"
           >
             Back to Fleet
           </Link>
         </div>
 
-        {/* Form area */}
         <div className="flex-1 flex flex-col justify-center max-w-sm w-full mx-auto">
 
-          {/* Heading */}
           <div className="mb-10">
-            <p className="text-[10px] uppercase tracking-[0.25em] text-[#D6B36A] font-medium mb-3">
+            <p className="text-[10px] uppercase tracking-[0.25em] text-[#C9A24D] font-semibold mb-3">
               {mode === "login" ? "Welcome Back" : "Create Account"}
             </p>
-            <h1 className="font-serif text-4xl sm:text-5xl font-light text-[#F5F3EE] tracking-tight">
+            <h1 className="font-serif text-4xl sm:text-5xl font-semibold text-[#172033]">
               {mode === "login" ? (
-                <>Sign <span className="font-normal italic text-[#D6B36A]">In</span></>
+                <>Sign <span className="text-[#C9A24D]">In</span></>
               ) : (
-                <>Get <span className="font-normal italic text-[#D6B36A]">Started</span></>
+                <>Get <span className="text-[#C9A24D]">Started</span></>
               )}
             </h1>
-            <p className="text-[#858B91] text-sm mt-4 font-light">
+            <p className="text-[#667085] text-sm mt-4">
               {mode === "login"
                 ? "Sign in to book a bike or scooter."
-                : "Join Spin City to start renting vehicles near you."}
+                : "Join SpinCity to start renting vehicles near you."}
             </p>
           </div>
 
-          {/* Fields */}
-          <form onSubmit={handleSubmit} className="flex flex-col gap-0 border-t border-white/10">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
 
             {mode === "register" && (
               <>
-                <div className="flex flex-col gap-1 border-b border-white/10 py-4">
-                  <label className="text-[10px] uppercase tracking-[0.2em] text-[#858B91] font-medium">
+                <div>
+                  <label className="block text-[11px] uppercase tracking-[0.14em] text-[#667085] font-medium mb-1.5">
                     Full Name
                   </label>
                   <input
@@ -154,12 +129,12 @@ const Login = () => {
                     type="text"
                     placeholder="Your name"
                     required
-                    className="text-sm font-light text-[#F5F3EE] placeholder-[#4A4F55] focus:outline-none bg-transparent py-1"
+                    className="w-full h-[48px] bg-white border border-[#E5E1D8] rounded-[4px] px-4 text-sm text-[#172033] placeholder:text-[#98A2B3] focus:outline-none focus:border-[#C9A24D]"
                   />
                 </div>
 
-                <div className="flex flex-col gap-1 border-b border-white/10 py-4">
-                  <label className="text-[10px] uppercase tracking-[0.2em] text-[#858B91] font-medium">
+                <div>
+                  <label className="block text-[11px] uppercase tracking-[0.14em] text-[#667085] font-medium mb-1.5">
                     Phone Number
                   </label>
                   <input
@@ -169,12 +144,12 @@ const Login = () => {
                     type="text"
                     placeholder="98XXXXXXXX"
                     required
-                    className="text-sm font-light text-[#F5F3EE] placeholder-[#4A4F55] focus:outline-none bg-transparent py-1"
+                    className="w-full h-[48px] bg-white border border-[#E5E1D8] rounded-[4px] px-4 text-sm text-[#172033] placeholder:text-[#98A2B3] focus:outline-none focus:border-[#C9A24D]"
                   />
                 </div>
 
-                <div className="flex flex-col gap-1 border-b border-white/10 py-4">
-                  <label className="text-[10px] uppercase tracking-[0.2em] text-[#858B91] font-medium">
+                <div>
+                  <label className="block text-[11px] uppercase tracking-[0.14em] text-[#667085] font-medium mb-1.5">
                     Address
                   </label>
                   <input
@@ -184,14 +159,14 @@ const Login = () => {
                     type="text"
                     placeholder="Your address"
                     required
-                    className="text-sm font-light text-[#F5F3EE] placeholder-[#4A4F55] focus:outline-none bg-transparent py-1"
+                    className="w-full h-[48px] bg-white border border-[#E5E1D8] rounded-[4px] px-4 text-sm text-[#172033] placeholder:text-[#98A2B3] focus:outline-none focus:border-[#C9A24D]"
                   />
                 </div>
               </>
             )}
 
-            <div className="flex flex-col gap-1 border-b border-white/10 py-4">
-              <label className="text-[10px] uppercase tracking-[0.2em] text-[#858B91] font-medium">
+            <div>
+              <label className="block text-[11px] uppercase tracking-[0.14em] text-[#667085] font-medium mb-1.5">
                 Email Address
               </label>
               <input
@@ -201,12 +176,12 @@ const Login = () => {
                 type="email"
                 placeholder="your@email.com"
                 required
-                className="text-sm font-light text-[#F5F3EE] placeholder-[#4A4F55] focus:outline-none bg-transparent py-1"
+                className="w-full h-[48px] bg-white border border-[#E5E1D8] rounded-[4px] px-4 text-sm text-[#172033] placeholder:text-[#98A2B3] focus:outline-none focus:border-[#C9A24D]"
               />
             </div>
 
-            <div className="flex flex-col gap-1 border-b border-white/10 py-4">
-              <label className="text-[10px] uppercase tracking-[0.2em] text-[#858B91] font-medium">
+            <div>
+              <label className="block text-[11px] uppercase tracking-[0.14em] text-[#667085] font-medium mb-1.5">
                 Password
               </label>
               <input
@@ -216,54 +191,49 @@ const Login = () => {
                 type="password"
                 placeholder="••••••••"
                 required
-                className="text-sm font-light text-[#F5F3EE] placeholder-[#4A4F55] focus:outline-none bg-transparent py-1"
+                className="w-full h-[48px] bg-white border border-[#E5E1D8] rounded-[4px] px-4 text-sm text-[#172033] placeholder:text-[#98A2B3] focus:outline-none focus:border-[#C9A24D]"
               />
             </div>
 
-            {/* Submit */}
             <button
               type="submit"
               disabled={loading}
-              className="w-full mt-8 bg-[#D6B36A] text-[#0B0D0F] h-14 text-xs uppercase tracking-[0.2em] font-semibold border border-[#D6B36A] hover:bg-[#E5C783] transition-colors duration-300 disabled:opacity-60"
+              className="w-full mt-2 bg-[#C9A24D] text-[#172033] h-[48px] rounded-[4px] text-[13px] uppercase tracking-[0.1em] font-semibold hover:brightness-95 transition-all disabled:opacity-60"
             >
               {loading ? "Please wait..." : mode === "login" ? "Sign In" : "Create Account"}
             </button>
           </form>
 
-          {/* Toggle */}
-          <p className="text-xs font-light text-[#858B91] mt-6 text-center">
+          <p className="text-sm text-[#667085] mt-6 text-center">
             {mode === "register" ? (
               <>
                 Already have an account?{" "}
                 <button
                   onClick={() => setMode("login")}
-                  className="text-[#D6B36A] underline underline-offset-2 cursor-pointer hover:text-[#E5C783] transition-colors"
+                  className="text-[#C9A24D] font-medium hover:text-[#9A7628] transition-colors"
                 >
                   Sign in here
                 </button>
               </>
             ) : (
               <>
-                New to Spin City?{" "}
+                New to SpinCity?{" "}
                 <button
                   onClick={() => setMode("register")}
-                  className="text-[#D6B36A] underline underline-offset-2 cursor-pointer hover:text-[#E5C783] transition-colors"
+                  className="text-[#C9A24D] font-medium hover:text-[#9A7628] transition-colors"
                 >
                   Create an account
                 </button>
               </>
             )}
           </p>
-
         </div>
 
-        {/* Bottom */}
         <div className="mt-16">
-          <p className="text-[10px] uppercase tracking-[0.2em] text-[#4A4F55] font-light">
-            © {new Date().getFullYear()} Spin City. All Rights Reserved.
+          <p className="text-[11px] uppercase tracking-[0.1em] text-[#98A2B3]">
+            © {new Date().getFullYear()} SpinCity. All Rights Reserved.
           </p>
         </div>
-
       </div>
     </div>
   );

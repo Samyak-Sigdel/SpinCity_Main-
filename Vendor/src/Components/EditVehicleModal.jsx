@@ -1,3 +1,4 @@
+// EditVehicleModal.jsx
 import React, { useContext, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -67,11 +68,11 @@ const EditVehicleModal = ({ vehicle, onClose, onSaved }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-[999] bg-black/60 flex items-center justify-center p-4">
-      <div className="w-full max-w-lg bg-[#101417] border border-white/10 max-h-[90vh] overflow-y-auto">
-        <div className="px-5 md:px-6 py-4 border-b border-white/10 flex items-center justify-between">
-          <h2 className="font-serif text-lg text-[#F5F3EE]">Edit Vehicle</h2>
-          <button onClick={onClose} className="text-[#858B91] hover:text-[#F5F3EE]" aria-label="Close">
+    <div className="fixed inset-0 z-[999] bg-[#172033]/60 flex items-center justify-center p-4">
+      <div className="w-full max-w-lg bg-white rounded-lg shadow-[0_8px_24px_rgba(23,32,51,0.10)] border border-[#E5E1D8] max-h-[90vh] overflow-y-auto">
+        <div className="px-5 md:px-6 py-4 border-b border-[#E5E1D8] flex items-center justify-between">
+          <h2 className="font-serif text-lg text-[#172033]">Edit Vehicle</h2>
+          <button onClick={onClose} className="text-[#667085] hover:text-[#172033]" aria-label="Close">
             <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
               <path d="M4 4l10 10M14 4L4 14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
             </svg>
@@ -80,12 +81,12 @@ const EditVehicleModal = ({ vehicle, onClose, onSaved }) => {
 
         <form onSubmit={handleSubmit} className="p-5 md:p-6 flex flex-col gap-5">
           <div>
-            <label className="block text-[10px] uppercase tracking-[0.18em] text-[#858B91] mb-2">
+            <label className="block text-[10px] uppercase tracking-[0.18em] text-[#667085] mb-2">
               Vehicle photo
             </label>
             <label
               htmlFor="edit-vehicle-image"
-              className="flex items-center justify-center w-full h-36 border border-dashed border-white/15 cursor-pointer overflow-hidden bg-[#181D21] hover:border-[#D6B36A]/60 transition-colors"
+              className="flex items-center justify-center w-full h-36 border border-dashed border-[#E5E1D8] rounded-lg cursor-pointer overflow-hidden bg-[#F7F5EF] hover:border-[#BFA05A]/60 transition-colors"
             >
               <img src={imagePreview} alt={vehicle.name} className="h-full w-full object-cover" />
             </label>
@@ -94,14 +95,14 @@ const EditVehicleModal = ({ vehicle, onClose, onSaved }) => {
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-[10px] uppercase tracking-[0.18em] text-[#858B91] mb-2">
+              <label className="block text-[10px] uppercase tracking-[0.18em] text-[#667085] mb-2">
                 Vehicle type
               </label>
               <select
                 name="category"
                 value={formData.category}
                 onChange={handleChange}
-                className="w-full h-[50px] bg-[#181D21] border border-white/10 text-[#F5F3EE] px-4 text-sm focus:outline-none focus:border-[#D6B36A] [color-scheme:dark]"
+                className="w-full h-[50px] bg-[#F7F5EF] border border-[#E5E1D8] rounded text-[#172033] px-4 text-sm focus:outline-none focus:border-[#BFA05A] focus:bg-white transition-colors"
               >
                 {VEHICLE_CATEGORIES.map((c) => (
                   <option key={c} value={c}>{c}</option>
@@ -109,14 +110,14 @@ const EditVehicleModal = ({ vehicle, onClose, onSaved }) => {
               </select>
             </div>
             <div>
-              <label className="block text-[10px] uppercase tracking-[0.18em] text-[#858B91] mb-2">
+              <label className="block text-[10px] uppercase tracking-[0.18em] text-[#667085] mb-2">
                 Status
               </label>
               <select
                 name="status"
                 value={formData.status}
                 onChange={handleChange}
-                className="w-full h-[50px] bg-[#181D21] border border-white/10 text-[#F5F3EE] px-4 text-sm focus:outline-none focus:border-[#D6B36A] [color-scheme:dark]"
+                className="w-full h-[50px] bg-[#F7F5EF] border border-[#E5E1D8] rounded text-[#172033] px-4 text-sm focus:outline-none focus:border-[#BFA05A] focus:bg-white transition-colors"
               >
                 {STATUS_OPTIONS.map((s) => (
                   <option key={s} value={s}>{s}</option>
@@ -126,7 +127,7 @@ const EditVehicleModal = ({ vehicle, onClose, onSaved }) => {
           </div>
 
           <div>
-            <label className="block text-[10px] uppercase tracking-[0.18em] text-[#858B91] mb-2">
+            <label className="block text-[10px] uppercase tracking-[0.18em] text-[#667085] mb-2">
               Vehicle name
             </label>
             <input
@@ -134,13 +135,13 @@ const EditVehicleModal = ({ vehicle, onClose, onSaved }) => {
               value={formData.name}
               onChange={handleChange}
               required
-              className="w-full h-[50px] bg-[#181D21] border border-white/10 text-[#F5F3EE] px-4 text-sm focus:outline-none focus:border-[#D6B36A]"
+              className="w-full h-[50px] bg-[#F7F5EF] border border-[#E5E1D8] rounded text-[#172033] px-4 text-sm focus:outline-none focus:border-[#BFA05A] focus:bg-white transition-colors"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-[10px] uppercase tracking-[0.18em] text-[#858B91] mb-2">
+              <label className="block text-[10px] uppercase tracking-[0.18em] text-[#667085] mb-2">
                 Price per day
               </label>
               <input
@@ -150,11 +151,11 @@ const EditVehicleModal = ({ vehicle, onClose, onSaved }) => {
                 value={formData.pricePerDay}
                 onChange={handleChange}
                 required
-                className="w-full h-[50px] bg-[#181D21] border border-white/10 text-[#F5F3EE] px-4 text-sm focus:outline-none focus:border-[#D6B36A]"
+                className="w-full h-[50px] bg-[#F7F5EF] border border-[#E5E1D8] rounded text-[#172033] px-4 text-sm focus:outline-none focus:border-[#BFA05A] focus:bg-white transition-colors"
               />
             </div>
             <div>
-              <label className="block text-[10px] uppercase tracking-[0.18em] text-[#858B91] mb-2">
+              <label className="block text-[10px] uppercase tracking-[0.18em] text-[#667085] mb-2">
                 Total units
               </label>
               <input
@@ -164,13 +165,13 @@ const EditVehicleModal = ({ vehicle, onClose, onSaved }) => {
                 value={formData.quantityTotal}
                 onChange={handleChange}
                 required
-                className="w-full h-[50px] bg-[#181D21] border border-white/10 text-[#F5F3EE] px-4 text-sm focus:outline-none focus:border-[#D6B36A]"
+                className="w-full h-[50px] bg-[#F7F5EF] border border-[#E5E1D8] rounded text-[#172033] px-4 text-sm focus:outline-none focus:border-[#BFA05A] focus:bg-white transition-colors"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-[10px] uppercase tracking-[0.18em] text-[#858B91] mb-2">
+            <label className="block text-[10px] uppercase tracking-[0.18em] text-[#667085] mb-2">
               Description
             </label>
             <textarea
@@ -179,7 +180,7 @@ const EditVehicleModal = ({ vehicle, onClose, onSaved }) => {
               onChange={handleChange}
               required
               rows={4}
-              className="w-full bg-[#181D21] border border-white/10 text-[#F5F3EE] px-4 py-3 text-sm focus:outline-none focus:border-[#D6B36A]"
+              className="w-full bg-[#F7F5EF] border border-[#E5E1D8] rounded text-[#172033] px-4 py-3 text-sm focus:outline-none focus:border-[#BFA05A] focus:bg-white transition-colors"
             />
           </div>
 
@@ -187,14 +188,14 @@ const EditVehicleModal = ({ vehicle, onClose, onSaved }) => {
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 h-[50px] border border-white/15 text-[#B5B8BB] text-[11px] font-semibold uppercase tracking-[0.18em] hover:border-white/30 transition-colors"
+              className="flex-1 h-[46px] border border-[#E5E1D8] rounded text-[#344054] text-[13px] font-semibold uppercase tracking-[0.12em] hover:border-[#98A2B3] transition-colors"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 h-[50px] bg-[#D6B36A] hover:bg-[#E5C783] text-[#0B0D0F] text-[11px] font-semibold uppercase tracking-[0.18em] transition-colors disabled:opacity-50"
+              className="flex-1 h-[46px] bg-[#BFA05A] hover:bg-[#AC8D48] text-[#172033] text-[13px] font-semibold uppercase tracking-[0.12em] rounded transition-colors disabled:opacity-50"
             >
               {loading ? "Saving..." : "Save Changes"}
             </button>

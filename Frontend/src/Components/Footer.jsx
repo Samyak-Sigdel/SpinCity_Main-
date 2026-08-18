@@ -1,196 +1,90 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { VEHICLE_CATEGORIES } from "../Context/CustomerContext";
+import { FaFacebookF, FaInstagram, FaTwitter, FaLinkedinIn } from "react-icons/fa";
+import { Phone, Mail, MapPin } from "lucide-react";
 
 const Footer = () => {
   return (
-    <footer className="bg-[#080A0C] text-[#92989F]">
+    <footer className="bg-[#FBF8F1] border-t border-[#E5E1D8] text-[#667085]">
+      <div className="max-w-[1280px] mx-auto px-6 md:px-10 py-16">
 
-      {/* Main footer */}
-      <div className="max-w-7xl mx-auto px-5 md:px-8 py-20">
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-8">
 
           {/* Brand */}
           <div className="lg:col-span-2">
-
-            <Link
-              to="/"
-              className="inline-flex items-center gap-3"
-            >
-
-              <div
-                className="
-                  w-10 h-10
-                  border border-[#D6B36A]
-                  rotate-45
-                  flex items-center justify-center
-                "
-              >
-                <span className="-rotate-45 text-[#D6B36A] text-xl font-serif">
-                  S
-                </span>
+            <Link to="/" className="inline-flex items-center gap-3">
+              <div className="w-9 h-9 border border-[#C9A24D] rotate-45 flex items-center justify-center">
+                <span className="-rotate-45 text-[#C9A24D] text-lg font-serif font-semibold">S</span>
               </div>
-
-              <div className="flex flex-col leading-none">
-                <span className="font-serif text-2xl tracking-[0.18em] text-[#F5F3EE]">
-                  SPIN
-                </span>
-
-                <span className="text-[8px] tracking-[0.42em] text-[#D6B36A] mt-1">
-                  CITY
-                </span>
-              </div>
-
+              <span className="font-serif text-xl font-semibold text-[#172033]">
+                Spin<span className="text-[#C9A24D]">City</span>
+              </span>
             </Link>
 
-            <p className="mt-7 max-w-md text-sm leading-7 text-[#73797F]">
-              Premium bikes and scooters for every journey.
-              Discover your next ride and experience the freedom
-              of the open road.
+            <p className="mt-5 max-w-xs text-[13px] leading-6 text-[#667085]">
+              Premium two-wheeler rental platform connecting riders with trusted vehicle owners.
             </p>
 
-            <Link
-              to="/vehicles"
-              className="
-                inline-flex
-                items-center
-                gap-3
-                mt-7
-                text-[10px]
-                uppercase
-                tracking-[0.22em]
-                text-[#D6B36A]
-                hover:text-[#E5C783]
-                transition-colors
-              "
-            >
-              Explore the fleet
-              <span>→</span>
-            </Link>
-
-          </div>
-
-          {/* Explore */}
-          <div>
-
-            <h4 className="
-              text-[10px]
-              font-semibold
-              uppercase
-              tracking-[0.22em]
-              text-[#F5F3EE]
-              mb-6
-            ">
-              Explore
-            </h4>
-
-            <ul className="space-y-4 text-sm">
-
-              <li>
-                <Link
-                  to="/"
-                  className="hover:text-[#D6B36A] transition-colors"
+            <div className="flex items-center gap-3 mt-5">
+              {[FaFacebookF, FaInstagram, FaTwitter, FaLinkedinIn].map((Icon, idx) => (
+                <span
+                  key={idx}
+                  className="w-8 h-8 rounded-full border border-[#E5E1D8] flex items-center justify-center text-[#344054] hover:border-[#C9A24D] hover:text-[#C9A24D] transition-colors cursor-pointer"
                 >
-                  Home
-                </Link>
-              </li>
-
-              <li>
-                <Link
-                  to="/vehicles"
-                  className="hover:text-[#D6B36A] transition-colors"
-                >
-                  Our Fleet
-                </Link>
-              </li>
-
-              <li>
-                <Link
-                  to="/my-bookings"
-                  className="hover:text-[#D6B36A] transition-colors"
-                >
-                  My Bookings
-                </Link>
-              </li>
-
-              <li>
-                <Link
-                  to="/profile"
-                  className="hover:text-[#D6B36A] transition-colors"
-                >
-                  My Profile
-                </Link>
-              </li>
-
-            </ul>
-
-          </div>
-
-          {/* Vehicle Types */}
-          <div>
-
-            <h4 className="
-              text-[10px]
-              font-semibold
-              uppercase
-              tracking-[0.22em]
-              text-[#F5F3EE]
-              mb-6
-            ">
-              Vehicle Types
-            </h4>
-
-            <ul className="space-y-4 text-sm">
-
-              {VEHICLE_CATEGORIES.map((category) => (
-                <li key={category}>
-                  <Link
-                    to={`/vehicles?category=${category}`}
-                    className="hover:text-[#D6B36A] transition-colors"
-                  >
-                    {category}
-                  </Link>
-                </li>
+                  <Icon size={12} />
+                </span>
               ))}
+            </div>
+          </div>
 
+          {/* Company */}
+          <div>
+            <h4 className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#172033] mb-4">
+              Company
+            </h4>
+            <ul className="space-y-3 text-[13px]">
+              <li><Link to="/" className="hover:text-[#C9A24D] transition-colors">About Us</Link></li>
+              <li><Link to="/" className="hover:text-[#C9A24D] transition-colors">How It Works</Link></li>
+              <li><Link to="/" className="hover:text-[#C9A24D] transition-colors">Terms &amp; Conditions</Link></li>
+              <li><Link to="/" className="hover:text-[#C9A24D] transition-colors">Privacy Policy</Link></li>
             </ul>
+          </div>
 
+          {/* Contact */}
+          <div>
+            <h4 className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#172033] mb-4">
+              Contact Us
+            </h4>
+            <ul className="space-y-3 text-[13px]">
+              <li className="flex items-center gap-2">
+                <Phone size={14} strokeWidth={1.75} className="text-[#C9A24D]" />
+                01-4567890
+              </li>
+              <li className="flex items-center gap-2">
+                <Mail size={14} strokeWidth={1.75} className="text-[#C9A24D]" />
+                support@spincity.com
+              </li>
+              <li className="flex items-center gap-2">
+                <MapPin size={14} strokeWidth={1.75} className="text-[#C9A24D]" />
+                Kathmandu, Nepal
+              </li>
+            </ul>
           </div>
 
         </div>
 
-        {/* Divider */}
-        <div className="h-px bg-white/10 my-14" />
+        <div className="h-px bg-[#E5E1D8] my-10" />
 
-        {/* Bottom */}
-        <div className="
-          flex
-          flex-col
-          md:flex-row
-          items-center
-          justify-between
-          gap-5
-        ">
-
-          <p className="text-[10px] uppercase tracking-[0.15em] text-[#555B61]">
-            © {new Date().getFullYear()} Spin City. All rights reserved.
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+          <p className="text-[11px] text-[#98A2B3]">
+            © {new Date().getFullYear()} SpinCity. All rights reserved.
           </p>
-
-          <div className="flex items-center gap-6">
-
-            <span className="text-[10px] uppercase tracking-[0.15em] text-[#555B61]">
-              Ride. Explore. Repeat.
-            </span>
-
-            <span className="w-8 h-px bg-[#D6B36A]" />
-
-          </div>
-
+          <span className="text-[11px] uppercase tracking-[0.12em] text-[#98A2B3]">
+            Ride. Explore. Repeat.
+          </span>
         </div>
 
       </div>
-
     </footer>
   );
 };

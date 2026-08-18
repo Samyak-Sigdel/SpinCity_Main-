@@ -46,6 +46,8 @@ const VehicleDetails = () => {
   const estimatedTotal =
     vehicle && totalDays > 0 ? vehicle.pricePerDay * totalDays * quantity : 0;
 
+  const isAvailable = vehicle && vehicle.quantityAvailable > 0;
+
   const handleBooking = (e) => {
     e.preventDefault();
 
@@ -67,26 +69,26 @@ const VehicleDetails = () => {
 
   if (loading) {
     return (
-      <div className="bg-[#0B0D0F] min-h-screen">
-        <p className="text-sm text-[#858B91] p-8 text-center">Loading vehicle...</p>
+      <div className="bg-[#F7F5EF] min-h-screen">
+        <p className="text-sm text-[#667085] p-8 text-center">Loading vehicle...</p>
       </div>
     );
   }
 
   if (!vehicle) {
     return (
-      <div className="bg-[#0B0D0F] min-h-screen">
-        <p className="text-sm text-[#858B91] p-8 text-center">Vehicle not found.</p>
+      <div className="bg-[#F7F5EF] min-h-screen">
+        <p className="text-sm text-[#667085] p-8 text-center">Vehicle not found.</p>
       </div>
     );
   }
 
   return (
-    <div className="bg-[#0B0D0F] min-h-screen">
-      <div className="max-w-6xl mx-auto px-5 md:px-8 py-12 grid grid-cols-1 md:grid-cols-2 gap-10">
+    <div className="bg-[#F7F5EF] min-h-screen">
+      <div className="max-w-[1280px] mx-auto px-6 md:px-10 py-12 grid grid-cols-1 md:grid-cols-2 gap-10">
         {/* Image + details */}
         <div>
-          <div className="h-80 bg-[#181D21] border border-white/10 overflow-hidden rounded-sm flex items-center justify-center p-6">
+          <div className="h-80 bg-white border border-[#E5E1D8] rounded-[8px] shadow-[0_2px_8px_rgba(23,32,51,0.06)] overflow-hidden flex items-center justify-center p-6">
             <img
               src={vehicle.image}
               alt={vehicle.name}
@@ -95,34 +97,43 @@ const VehicleDetails = () => {
           </div>
 
           <div className="flex items-center gap-3 mt-7 mb-1">
-            <span className="w-8 h-px bg-[#D6B36A]" />
-            <p className="text-[10px] uppercase tracking-[0.25em] text-[#D6B36A]">
+            <span className="w-8 h-px bg-[#C9A24D]" />
+            <p className="text-[10px] uppercase tracking-[0.25em] text-[#C9A24D]">
               {vehicle.category}
             </p>
           </div>
-          <h1 className="font-serif text-3xl md:text-4xl text-[#F5F3EE] mt-2">
+          <h1 className="font-serif text-3xl md:text-4xl font-semibold text-[#172033] mt-2">
             {vehicle.name}
           </h1>
-          <p className="text-sm text-[#B5B8BB] mt-4 leading-relaxed">
+
+          <span
+            className={`inline-flex items-center mt-3 px-2.5 py-1 rounded-[4px] text-[11px] font-medium uppercase ${
+              isAvailable ? "bg-[#E5F3ED] text-[#3E8B73]" : "bg-[#FBEAEA] text-[#C75C5C]"
+            }`}
+          >
+            {isAvailable ? `${vehicle.quantityAvailable} Available` : "Unavailable"}
+          </span>
+
+          <p className="text-sm text-[#667085] mt-4 leading-relaxed">
             {vehicle.description}
           </p>
 
-          <div className="mt-6 text-sm text-[#858B91]">
+          <div className="mt-6 text-sm text-[#667085]">
             Listed by{" "}
-            <span className="text-[#F5F3EE] font-medium">
+            <span className="text-[#172033] font-medium">
               {vehicle.owner?.shopName}
             </span>
           </div>
 
           {vehicle.location?.address && (
-            <div className="mt-2 text-sm text-[#858B91] flex items-start gap-1.5">
+            <div className="mt-2 text-sm text-[#667085] flex items-start gap-1.5">
               <svg width="14" height="14" viewBox="0 0 12 12" fill="none" className="mt-0.5 shrink-0">
                 <path
                   d="M6 0.75C3.79 0.75 2 2.54 2 4.75c0 3 4 6.5 4 6.5s4-3.5 4-6.5c0-2.21-1.79-4-4-4z"
-                  stroke="#858B91"
+                  stroke="#C9A24D"
                   strokeWidth="1"
                 />
-                <circle cx="6" cy="4.75" r="1.3" stroke="#858B91" strokeWidth="1" />
+                <circle cx="6" cy="4.75" r="1.3" stroke="#C9A24D" strokeWidth="1" />
               </svg>
               <span>Pickup at {vehicle.location.address}</span>
             </div>
@@ -131,22 +142,19 @@ const VehicleDetails = () => {
 
         {/* Booking form */}
         <div>
-          <div className="relative border border-white/10 bg-[#101417]/95 backdrop-blur-xl p-6 sticky top-24">
-            <span className="absolute -top-px -left-px w-8 h-8 border-t border-l border-[#D6B36A]/70" />
-            <span className="absolute -bottom-px -right-px w-8 h-8 border-b border-r border-[#D6B36A]/70" />
-
-            <p className="text-2xl font-semibold text-[#F5F3EE]">
+          <div className="bg-white border border-[#E5E1D8] rounded-[8px] shadow-[0_8px_24px_rgba(23,32,51,0.10)] p-6 sticky top-24">
+            <p className="text-2xl font-semibold text-[#172033]">
               Rs. {vehicle.pricePerDay}
-              <span className="text-sm text-[#858B91] font-normal"> / day</span>
+              <span className="text-sm text-[#667085] font-normal"> / day</span>
             </p>
-            <p className="text-xs text-[#858B91] mt-1">
+            <p className="text-xs text-[#667085] mt-1">
               {vehicle.quantityAvailable} of {vehicle.quantityTotal} available
             </p>
 
             <form onSubmit={handleBooking} className="flex flex-col gap-4 mt-6">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[10px] font-semibold uppercase tracking-[0.18em] text-[#858B91] mb-2">
+                  <label className="block text-[10px] font-semibold uppercase tracking-[0.14em] text-[#667085] mb-2">
                     Start date
                   </label>
                   <input
@@ -155,11 +163,11 @@ const VehicleDetails = () => {
                     onChange={(e) => setStartDate(e.target.value)}
                     min={new Date().toISOString().split("T")[0]}
                     required
-                    className="w-full h-[50px] bg-[#181D21] border border-white/10 text-[#F5F3EE] px-3 text-sm focus:outline-none focus:border-[#D6B36A] [color-scheme:dark]"
+                    className="w-full h-[48px] bg-[#F7F5EF] border border-[#E5E1D8] rounded-[4px] text-[#172033] px-3 text-sm focus:outline-none focus:border-[#C9A24D]"
                   />
                 </div>
                 <div>
-                  <label className="block text-[10px] font-semibold uppercase tracking-[0.18em] text-[#858B91] mb-2">
+                  <label className="block text-[10px] font-semibold uppercase tracking-[0.14em] text-[#667085] mb-2">
                     End date
                   </label>
                   <input
@@ -168,13 +176,13 @@ const VehicleDetails = () => {
                     onChange={(e) => setEndDate(e.target.value)}
                     min={startDate || new Date().toISOString().split("T")[0]}
                     required
-                    className="w-full h-[50px] bg-[#181D21] border border-white/10 text-[#F5F3EE] px-3 text-sm focus:outline-none focus:border-[#D6B36A] [color-scheme:dark]"
+                    className="w-full h-[48px] bg-[#F7F5EF] border border-[#E5E1D8] rounded-[4px] text-[#172033] px-3 text-sm focus:outline-none focus:border-[#C9A24D]"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-[10px] font-semibold uppercase tracking-[0.18em] text-[#858B91] mb-2">
+                <label className="block text-[10px] font-semibold uppercase tracking-[0.14em] text-[#667085] mb-2">
                   Quantity
                 </label>
                 <input
@@ -184,16 +192,16 @@ const VehicleDetails = () => {
                   value={quantity}
                   onChange={(e) => setQuantity(Number(e.target.value))}
                   required
-                  className="w-full h-[50px] bg-[#181D21] border border-white/10 text-[#F5F3EE] px-3 text-sm focus:outline-none focus:border-[#D6B36A]"
+                  className="w-full h-[48px] bg-[#F7F5EF] border border-[#E5E1D8] rounded-[4px] text-[#172033] px-3 text-sm focus:outline-none focus:border-[#C9A24D]"
                 />
               </div>
 
               {totalDays > 0 && (
-                <div className="border-t border-white/10 pt-4 flex items-center justify-between text-sm">
-                  <span className="text-[#858B91]">
+                <div className="border-t border-[#E5E1D8] pt-4 flex items-center justify-between text-sm">
+                  <span className="text-[#667085]">
                     {totalDays} day{totalDays > 1 ? "s" : ""} × {quantity}
                   </span>
-                  <span className="font-semibold text-[#D6B36A]">
+                  <span className="font-semibold text-[#172033]">
                     Rs. {estimatedTotal}
                   </span>
                 </div>
@@ -202,7 +210,7 @@ const VehicleDetails = () => {
               <button
                 type="submit"
                 disabled={vehicle.quantityAvailable === 0}
-                className="mt-2 bg-[#D6B36A] text-[#0B0D0F] py-3.5 text-[11px] font-semibold uppercase tracking-[0.2em] hover:bg-[#E5C783] transition-colors disabled:opacity-50 disabled:hover:bg-[#D6B36A]"
+                className="mt-2 bg-[#C9A24D] text-[#172033] h-[48px] rounded-[4px] text-[12px] font-semibold uppercase tracking-[0.1em] hover:brightness-95 transition-all disabled:opacity-50 disabled:hover:brightness-100"
               >
                 {vehicle.quantityAvailable === 0
                   ? "Currently Unavailable"

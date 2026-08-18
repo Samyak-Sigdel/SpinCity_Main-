@@ -15,11 +15,6 @@ const generateSlots = () => {
 
 const SLOTS = generateSlots();
 
-/**
- * Time picker matching the Spin City "reservation panel" styling:
- * dark glass field + a scrollable grid of 30-minute slots on a
- * dark popover, gold accents for the active state.
- */
 const TimePicker = ({ label, value, onChange }) => {
   const [open, setOpen] = useState(false);
   const wrapperRef = useRef(null);
@@ -44,18 +39,18 @@ const TimePicker = ({ label, value, onChange }) => {
       <button
         type="button"
         onClick={() => setOpen(!open)}
-        className={`w-full h-[54px] text-left border bg-[#181D21] px-4 text-sm transition-colors ${
-          open ? "border-[#D6B36A]" : "border-white/10 hover:border-[#D6B36A]/60"
-        } ${value ? "text-[#F5F3EE]" : "text-[#70767C]"}`}
+        className={`w-full h-[44px] text-left border rounded-[4px] bg-[#F7F5EF] px-3 text-[15px] transition-colors ${
+          open ? "border-[#C9A24D]" : "border-[#E5E1D8] hover:border-[#C9A24D]/60"
+        } ${value ? "text-[#172033]" : "text-[#98A2B3]"}`}
       >
         {value || "Select time"}
       </button>
 
       {open && (
-        <div className="absolute left-0 top-full mt-2 w-72 bg-[#101417] border border-white/10 shadow-2xl z-50 overflow-hidden">
+        <div className="absolute left-0 top-full mt-2 w-72 bg-white border border-[#E5E1D8] rounded-[8px] shadow-[0_8px_24px_rgba(23,32,51,0.10)] z-50 overflow-hidden">
           {label && (
-            <div className="px-4 py-3 border-b border-white/10 text-center">
-              <p className="text-[10px] uppercase tracking-[0.2em] text-[#D6B36A]">
+            <div className="px-4 py-3 border-b border-[#E5E1D8] text-center bg-[#F5E9C9]/40">
+              <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-[#C9A24D]">
                 {label}
               </p>
             </div>
@@ -66,10 +61,10 @@ const TimePicker = ({ label, value, onChange }) => {
                 key={slot}
                 type="button"
                 onClick={() => handleSelect(slot)}
-                className={`px-3 py-2.5 text-sm font-medium transition-colors ${
+                className={`px-3 py-2.5 rounded-[4px] text-[13px] font-medium transition-colors ${
                   value === slot
-                    ? "bg-[#D6B36A] text-[#0B0D0F]"
-                    : "bg-[#181D21] text-[#B5B8BB] hover:bg-white/5 hover:text-[#F5F3EE]"
+                    ? "bg-[#C9A24D] text-[#172033]"
+                    : "bg-[#F7F5EF] text-[#344054] hover:bg-[#F5E9C9]/60 hover:text-[#172033]"
                 }`}
               >
                 {slot}

@@ -1,3 +1,4 @@
+// App.jsx
 import { Routes, Route, Navigate } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -14,7 +15,7 @@ import ProfilePage from "./Pages/ProfilePage";
 
 const App = () => {
   return (
-    <div className="bg-[#0B0D0F] min-h-screen flex flex-col">
+    <div className="bg-[#F7F5EF] min-h-screen flex flex-col">
       <ToastContainer position="top-right" />
       <Navbar />
 
