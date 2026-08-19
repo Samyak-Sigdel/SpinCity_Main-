@@ -1,7 +1,11 @@
 import React, { useContext, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { CustomerContext } from "../Context/CustomerContext";
-import { Menu, X, User, LogOut, CalendarCheck } from "lucide-react";
+import { Menu, X, User, LogOut, CalendarCheck, Store } from "lucide-react";
+
+// Vendor app lives on a different Vite dev server / different domain in prod.
+// Set this in Customer project's .env as VITE_VENDOR_URL
+const VENDOR_URL = import.meta.env.VITE_VENDOR_URL || "http://localhost:5174";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -94,14 +98,19 @@ const Navbar = () => {
                 >
                   Login
                 </Link>
-                <Link
-                  to="/vehicles"
-                  className="bg-[#C9A24D] hover:brightness-95 hover:shadow-[0_4px_16px_rgba(23,32,51,0.08)] text-[#172033] px-5 h-[44px] flex items-center rounded-[4px] text-[13px] font-semibold uppercase tracking-[0.06em] transition-all"
-                >
-                  Rent Now
-                </Link>
               </>
             )}
+
+            {/* Cross-app link to the separate Vendor project — must be a plain <a>, not <Link> */}
+            <a
+              href={VENDOR_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 bg-[#C9A24D] hover:brightness-95 hover:shadow-[0_4px_16px_rgba(23,32,51,0.08)] text-[#172033] px-5 h-[44px] rounded-[4px] text-[13px] font-semibold uppercase tracking-[0.06em] transition-all"
+            >
+              <Store size={15} strokeWidth={1.75} />
+              Become a Vendor
+            </a>
           </div>
 
           {/* Mobile menu button */}
@@ -167,15 +176,18 @@ const Navbar = () => {
                   >
                     Login
                   </Link>
-                  <Link
-                    to="/vehicles"
-                    onClick={() => setMenuOpen(false)}
-                    className="w-full bg-[#C9A24D] py-3 rounded-[4px] text-center text-xs font-semibold uppercase tracking-[0.1em] text-[#172033]"
-                  >
-                    Rent Now
-                  </Link>
                 </div>
               )}
+              <a
+                href={VENDOR_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => setMenuOpen(false)}
+                className="mt-3 w-full flex items-center justify-center gap-2 bg-[#C9A24D] py-3 rounded-[4px] text-center text-xs font-semibold uppercase tracking-[0.1em] text-[#172033]"
+              >
+                <Store size={14} strokeWidth={1.75} />
+                Become a Vendor
+              </a>
             </div>
           </div>
         </div>

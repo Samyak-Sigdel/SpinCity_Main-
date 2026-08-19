@@ -108,6 +108,28 @@ const Vehicles = () => {
     return { min: Math.min(...prices), max: Math.max(...prices) };
   }, [vehicles]);
 
+  const hasActiveFilters =
+    selectedTypes.length > 0 ||
+    selectedVendors.length > 0 ||
+    priceMin !== "" ||
+    priceMax !== "" ||
+    !!searchTerm ||
+    !!activeAddress;
+
+  const clearAllFilters = () => {
+    setSelectedTypes([]);
+    setSelectedVendors([]);
+    setPriceMin("");
+    setPriceMax("");
+    setSearchTerm("");
+    const params = Object.fromEntries(searchParams);
+    delete params.search;
+    delete params.lat;
+    delete params.lng;
+    delete params.address;
+    setSearchParams(params);
+  };
+
   const displayedVehicles = useMemo(() => {
     let result = [...vehicles];
 
@@ -159,19 +181,43 @@ const Vehicles = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-[260px_1fr] gap-8 mt-8">
           {/* Sidebar */}
-          <aside className="space-y-6 bg-white border border-[#E5E1D8] rounded-[8px] p-5 h-fit shadow-[0_2px_8px_rgba(23,32,51,0.06)]">
-            <button
-              onClick={() => setLocationModalOpen(true)}
-              className="flex items-center gap-2 border border-[#E5E1D8] bg-[#F7F5EF] rounded-[4px] px-4 py-3 w-full text-left hover:border-[#C9A24D] transition-colors"
-            >
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="shrink-0">
-                <circle cx="7" cy="7" r="5" stroke="#667085" strokeWidth="1.5" />
-                <path d="M11 11l4 4" stroke="#667085" strokeWidth="1.5" strokeLinecap="round" />
-              </svg>
-              <span className="text-sm text-[#667085] truncate">
-                {activeAddress ? "Change location" : "Search near a location"}
-              </span>
-            </button>
+          <aside className="space-y-5 bg-white border border-[#E5E1D8] rounded-[8px] p-5 h-fit shadow-[0_2px_8px_rgba(23,32,51,0.06)]">
+            <div className="flex items-center justify-between">
+              <p className="text-[11px] uppercase tracking-[0.14em] font-semibold text-[#344054]">
+                Filters
+              </p>
+              {hasActiveFilters && (
+                <button
+                  onClick={clearAllFilters}
+                  className="text-[11px] text-[#C9A24D] underline"
+                >
+                  Clear all
+                </button>
+              )}
+            </div>
+
+            {/* Pickup location */}
+            <div>
+              <p className="text-[11px] uppercase tracking-[0.14em] font-semibold text-[#344054] mb-2">
+                Pickup location
+              </p>
+              <button
+                onClick={() => setLocationModalOpen(true)}
+                className="flex items-center gap-2 border border-[#E5E1D8] bg-[#F7F5EF] rounded-[4px] px-4 py-3 w-full text-left hover:border-[#C9A24D] transition-colors"
+              >
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="shrink-0">
+                  <path
+                    d="M8 14.5s5-4.4 5-8.5a5 5 0 10-10 0c0 4.1 5 8.5 5 8.5z"
+                    stroke="#C9A24D"
+                    strokeWidth="1.5"
+                  />
+                  <circle cx="8" cy="6" r="1.8" stroke="#C9A24D" strokeWidth="1.5" />
+                </svg>
+                <span className="text-sm text-[#172033] truncate">
+                  {activeAddress || "Where are you renting?"}
+                </span>
+              </button>
+            </div>
 
             <LocationPickerModal
               isOpen={locationModalOpen}
@@ -180,77 +226,64 @@ const Vehicles = () => {
               initialAddress={activeAddress}
             />
 
-            <form onSubmit={handleSearchSubmit}>
-              <input
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Search vehicles..."
-                className="w-full bg-[#F7F5EF] border border-[#E5E1D8] rounded-[4px] text-[#172033] placeholder:text-[#98A2B3] px-4 py-2.5 text-sm focus:outline-none focus:border-[#C9A24D]"
-              />
-            </form>
-
-            {/* Sort by */}
+            {/* Search vehicles */}
             <div>
               <p className="text-[11px] uppercase tracking-[0.14em] font-semibold text-[#344054] mb-2">
-                Sort by
+                Search
               </p>
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="w-full bg-[#F7F5EF] border border-[#E5E1D8] rounded-[4px] text-[#172033] px-3 py-2.5 text-sm focus:outline-none focus:border-[#C9A24D]"
-              >
-                {SORT_OPTIONS.map((opt) => (
-                  <option key={opt.value} value={opt.value}>
-                    {opt.label}
-                  </option>
-                ))}
-              </select>
+              <form onSubmit={handleSearchSubmit}>
+                <input
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  placeholder="Honda, Activa, scooter..."
+                  className="w-full bg-[#F7F5EF] border border-[#E5E1D8] rounded-[4px] text-[#172033] placeholder:text-[#98A2B3] px-4 py-2.5 text-sm focus:outline-none focus:border-[#C9A24D]"
+                />
+              </form>
             </div>
 
             {/* Price range */}
-            <div className="border-t border-[#E5E1D8] pt-5">
-              <p className="text-[11px] uppercase tracking-[0.14em] font-semibold text-[#344054] mb-3">
+            <div>
+              <p className="text-[11px] uppercase tracking-[0.14em] font-semibold text-[#344054] mb-2">
                 Price per day
               </p>
               <div className="flex items-center gap-2">
-                <input
-                  type="number"
-                  min="0"
-                  value={priceMin}
-                  onChange={(e) => setPriceMin(e.target.value)}
-                  placeholder={priceBounds.min ? String(priceBounds.min) : "Min"}
-                  className="w-1/2 bg-[#F7F5EF] border border-[#E5E1D8] rounded-[4px] text-[#172033] placeholder:text-[#98A2B3] px-2 py-2 text-xs focus:outline-none focus:border-[#C9A24D]"
-                />
+                <div className="relative w-1/2">
+                  <span className="absolute left-2 top-1/2 -translate-y-1/2 text-[11px] text-[#98A2B3]">
+                    Rs.
+                  </span>
+                  <input
+                    type="number"
+                    min="0"
+                    value={priceMin}
+                    onChange={(e) => setPriceMin(e.target.value)}
+                    placeholder={priceBounds.min ? String(priceBounds.min) : "Min"}
+                    className="w-full bg-[#F7F5EF] border border-[#E5E1D8] rounded-[4px] text-[#172033] placeholder:text-[#98A2B3] pl-7 pr-2 py-2 text-xs focus:outline-none focus:border-[#C9A24D]"
+                  />
+                </div>
                 <span className="text-[#667085] text-xs">–</span>
-                <input
-                  type="number"
-                  min="0"
-                  value={priceMax}
-                  onChange={(e) => setPriceMax(e.target.value)}
-                  placeholder={priceBounds.max ? String(priceBounds.max) : "Max"}
-                  className="w-1/2 bg-[#F7F5EF] border border-[#E5E1D8] rounded-[4px] text-[#172033] placeholder:text-[#98A2B3] px-2 py-2 text-xs focus:outline-none focus:border-[#C9A24D]"
-                />
+                <div className="relative w-1/2">
+                  <span className="absolute left-2 top-1/2 -translate-y-1/2 text-[11px] text-[#98A2B3]">
+                    Rs.
+                  </span>
+                  <input
+                    type="number"
+                    min="0"
+                    value={priceMax}
+                    onChange={(e) => setPriceMax(e.target.value)}
+                    placeholder={priceBounds.max ? String(priceBounds.max) : "Max"}
+                    className="w-full bg-[#F7F5EF] border border-[#E5E1D8] rounded-[4px] text-[#172033] placeholder:text-[#98A2B3] pl-7 pr-2 py-2 text-xs focus:outline-none focus:border-[#C9A24D]"
+                  />
+                </div>
               </div>
-              {(priceMin !== "" || priceMax !== "") && (
-                <button
-                  onClick={() => {
-                    setPriceMin("");
-                    setPriceMax("");
-                  }}
-                  className="text-[11px] text-[#C9A24D] underline mt-2"
-                >
-                  Clear price filter
-                </button>
-              )}
             </div>
 
             {/* Vendor */}
             {availableVendors.length > 0 && (
-              <div className="border-t border-[#E5E1D8] pt-5">
-                <p className="text-[11px] uppercase tracking-[0.14em] font-semibold text-[#344054] mb-3">
+              <div>
+                <p className="text-[11px] uppercase tracking-[0.14em] font-semibold text-[#344054] mb-2">
                   Vendor
                 </p>
-                <label className="flex items-center gap-2 text-sm text-[#172033] mb-2 cursor-pointer">
+                <label className="flex items-center gap-2 text-sm text-[#172033] mb-1.5 cursor-pointer">
                   <input
                     type="checkbox"
                     checked={selectedVendors.length === 0}
@@ -262,7 +295,7 @@ const Vehicles = () => {
                 {availableVendors.map((name) => (
                   <label
                     key={name}
-                    className="flex items-center gap-2 text-sm text-[#344054] mb-2 cursor-pointer"
+                    className="flex items-center gap-2 text-sm text-[#344054] mb-1.5 cursor-pointer"
                   >
                     <input
                       type="checkbox"
@@ -277,11 +310,11 @@ const Vehicles = () => {
             )}
 
             {/* Vehicle type */}
-            <div className="border-t border-[#E5E1D8] pt-5">
-              <p className="text-[11px] uppercase tracking-[0.14em] font-semibold text-[#344054] mb-3">
+            <div>
+              <p className="text-[11px] uppercase tracking-[0.14em] font-semibold text-[#344054] mb-2">
                 Vehicle Type
               </p>
-              <label className="flex items-center gap-2 text-sm text-[#172033] mb-2 cursor-pointer">
+              <label className="flex items-center gap-2 text-sm text-[#172033] mb-1.5 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={selectedTypes.length === 0}
@@ -293,7 +326,7 @@ const Vehicles = () => {
               {VEHICLE_CATEGORIES.map((type) => (
                 <label
                   key={type}
-                  className="flex items-center gap-2 text-sm text-[#344054] mb-2 cursor-pointer"
+                  className="flex items-center gap-2 text-sm text-[#344054] mb-1.5 cursor-pointer"
                 >
                   <input
                     type="checkbox"
@@ -309,6 +342,30 @@ const Vehicles = () => {
 
           {/* Results */}
           <div>
+            {/* Results header: count + sort (moved out of sidebar per audit #11) */}
+            <div className="flex items-center justify-between mb-4">
+              <p className="text-sm font-medium text-[#172033]">
+                {loading ? "Loading..." : `${displayedVehicles.length} vehicle${displayedVehicles.length !== 1 ? "s" : ""} found`}
+              </p>
+              <div className="flex items-center gap-2">
+                <label htmlFor="sort" className="text-xs text-[#667085] hidden sm:inline">
+                  Sort:
+                </label>
+                <select
+                  id="sort"
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="bg-white border border-[#E5E1D8] rounded-[4px] text-[#172033] px-3 py-2 text-sm focus:outline-none focus:border-[#C9A24D]"
+                >
+                  {SORT_OPTIONS.map((opt) => (
+                    <option key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
             {loading ? (
               <p className="text-sm text-[#667085]">Loading vehicles...</p>
             ) : displayedVehicles.length === 0 ? (
@@ -320,16 +377,11 @@ const Vehicles = () => {
                 </p>
               </div>
             ) : (
-              <>
-                <p className="text-xs text-[#667085] mb-4">
-                  {displayedVehicles.length} vehicle{displayedVehicles.length !== 1 ? "s" : ""} found
-                </p>
-                <div className="flex flex-col gap-4">
-                  {displayedVehicles.map((vehicle) => (
-                    <VehicleCard key={vehicle._id} vehicle={vehicle} />
-                  ))}
-                </div>
-              </>
+              <div className="flex flex-col gap-4">
+                {displayedVehicles.map((vehicle) => (
+                  <VehicleCard key={vehicle._id} vehicle={vehicle} />
+                ))}
+              </div>
             )}
           </div>
         </div>
