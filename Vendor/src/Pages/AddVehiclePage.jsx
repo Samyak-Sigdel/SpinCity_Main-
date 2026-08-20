@@ -11,7 +11,7 @@ const AddVehiclePage = () => {
   return (
     <div className="flex flex-col items-center">
       <div className="w-full max-w-xl">
-        <h2 className="font-serif text-xl text-[#172033] mb-6 text-center">Add a Vehicle</h2>
+        <h2 className="font-serif text-xl text-[#142033] mb-6 text-center">Add a Vehicle</h2>
         <AddVehicleForm
           onAdded={() => {
             getDashboardStats();

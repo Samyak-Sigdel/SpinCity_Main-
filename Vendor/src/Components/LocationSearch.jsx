@@ -67,18 +67,18 @@ const LocationSearch = ({ placeholder = "City, address, area...", onSelect, init
         onFocus={() => query.length >= 3 && setShowDropdown(true)}
         onBlur={() => setTimeout(() => setShowDropdown(false), 150)}
         placeholder={placeholder}
-        className="w-full h-[54px] bg-[#F7F5EF] border border-[#E5E1D8] rounded text-[#172033] placeholder:text-[#98A2B3] px-4 text-sm focus:outline-none focus:border-[#BFA05A] focus:bg-white transition-colors"
+        className="w-full h-[54px] bg-[#F8F7F2] border border-[#E5E2D9] rounded text-[#142033] placeholder:text-[#64748B] px-4 text-sm focus:outline-none focus:border-[#145A4A] focus:bg-white transition-colors"
       />
 
       {showDropdown && query.length >= 3 && (
-        <div className="absolute left-0 right-0 top-full mt-2 bg-white border border-[#E5E1D8] rounded-lg shadow-[0_8px_24px_rgba(23,32,51,0.10)] z-50 max-h-64 overflow-y-auto">
+        <div className="absolute left-0 right-0 top-full mt-2 bg-white border border-[#E5E2D9] rounded-lg shadow-[0_8px_24px_rgba(20,32,51,0.10)] z-50 max-h-64 overflow-y-auto">
           {loading && (
-            <p className="px-4 py-3 text-xs text-[#667085] uppercase tracking-[0.15em]">
+            <p className="px-4 py-3 text-xs text-[#64748B] uppercase tracking-[0.15em]">
               Searching...
             </p>
           )}
           {!loading && suggestions.length === 0 && (
-            <p className="px-4 py-3 text-xs text-[#667085] uppercase tracking-[0.15em]">
+            <p className="px-4 py-3 text-xs text-[#64748B] uppercase tracking-[0.15em]">
               No locations found
             </p>
           )}
@@ -88,7 +88,7 @@ const LocationSearch = ({ placeholder = "City, address, area...", onSelect, init
                 key={place.place_id}
                 type="button"
                 onMouseDown={() => handleSelect(place)}
-                className="w-full text-left px-4 py-3 text-sm text-[#172033] hover:bg-[#F7F5EF] border-b border-[#E5E1D8] last:border-b-0 transition-colors"
+                className="w-full text-left px-4 py-3 text-sm text-[#142033] hover:bg-[#F8F7F2] border-b border-[#E5E2D9] last:border-b-0 transition-colors"
               >
                 {place.display_name}
               </button>

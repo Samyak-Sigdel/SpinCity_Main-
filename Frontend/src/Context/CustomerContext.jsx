@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 export const CustomerContext = createContext();
 
 // shared across Vehicles filter, VehicleCard, etc.
-export const VEHICLE_CATEGORIES = ["Car", "Motorbike", "Cycle"];
+export const VEHICLE_CATEGORIES = ["Scooter", "Motorbike", "Cycle"];
 
 const CustomerContextProvider = (props) => {
   const backendUrl = import.meta.env.VITE_BACKENDURL;

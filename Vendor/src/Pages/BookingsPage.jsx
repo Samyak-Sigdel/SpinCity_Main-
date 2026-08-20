@@ -4,7 +4,7 @@ import BookingsList from "../Components/BookingsList";
 
 const BookingsPage = () => (
   <div>
-    <h2 className="font-serif text-xl text-[#172033] mb-6">Bookings</h2>
+    <h2 className="font-serif text-xl text-[#142033] mb-6">Bookings</h2>
     <BookingsList />
   </div>
 );

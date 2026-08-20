@@ -54,7 +54,7 @@ const ProfileForm = () => {
 
   if (!vendorProfile) {
     return (
-      <p className="text-sm text-[#667085] uppercase tracking-[0.15em]">
+      <p className="text-sm text-[#64748B] uppercase tracking-[0.15em]">
         Loading profile...
       </p>
     );
@@ -62,17 +62,17 @@ const ProfileForm = () => {
 
   return (
     <div className="max-w-lg">
-      <div className="border border-[#E5E1D8] bg-white rounded-lg shadow-[0_2px_8px_rgba(23,32,51,0.06)] p-5 md:p-6 mb-6">
-        <p className="text-[10px] uppercase tracking-[0.18em] text-[#667085]">Email</p>
-        <p className="text-sm text-[#172033] mt-2">{vendorProfile.email}</p>
-        <p className="text-xs text-[#98A2B3] mt-3">
+      <div className="border border-[#E5E2D9] bg-white rounded-lg shadow-[0_2px_8px_rgba(20,32,51,0.06)] p-5 md:p-6 mb-6">
+        <p className="text-[10px] uppercase tracking-[0.18em] text-[#64748B]">Email</p>
+        <p className="text-sm text-[#142033] mt-2">{vendorProfile.email}</p>
+        <p className="text-xs text-[#64748B] mt-3">
           Email can't be changed here. Contact support if you need to update it.
         </p>
       </div>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-5">
         <div>
-          <label className="block text-[10px] uppercase tracking-[0.18em] text-[#667085] mb-2">
+          <label className="block text-[10px] uppercase tracking-[0.18em] text-[#64748B] mb-2">
             Full name
           </label>
           <input
@@ -80,12 +80,12 @@ const ProfileForm = () => {
             value={formData.name}
             onChange={handleChange}
             required
-            className="w-full h-[54px] bg-[#F7F5EF] border border-[#E5E1D8] rounded text-[#172033] px-4 text-sm focus:outline-none focus:border-[#BFA05A] focus:bg-white transition-colors"
+            className="w-full h-[54px] bg-[#F8F7F2] border border-[#E5E2D9] rounded text-[#142033] px-4 text-sm focus:outline-none focus:border-[#145A4A] focus:bg-white transition-colors"
           />
         </div>
 
         <div>
-          <label className="block text-[10px] uppercase tracking-[0.18em] text-[#667085] mb-2">
+          <label className="block text-[10px] uppercase tracking-[0.18em] text-[#64748B] mb-2">
             Shop name
           </label>
           <input
@@ -93,12 +93,12 @@ const ProfileForm = () => {
             value={formData.shopName}
             onChange={handleChange}
             required
-            className="w-full h-[54px] bg-[#F7F5EF] border border-[#E5E1D8] rounded text-[#172033] px-4 text-sm focus:outline-none focus:border-[#BFA05A] focus:bg-white transition-colors"
+            className="w-full h-[54px] bg-[#F8F7F2] border border-[#E5E2D9] rounded text-[#142033] px-4 text-sm focus:outline-none focus:border-[#145A4A] focus:bg-white transition-colors"
           />
         </div>
 
         <div>
-          <label className="block text-[10px] uppercase tracking-[0.18em] text-[#667085] mb-2">
+          <label className="block text-[10px] uppercase tracking-[0.18em] text-[#64748B] mb-2">
             Phone
           </label>
           <input
@@ -106,12 +106,12 @@ const ProfileForm = () => {
             value={formData.phone}
             onChange={handleChange}
             required
-            className="w-full h-[54px] bg-[#F7F5EF] border border-[#E5E1D8] rounded text-[#172033] px-4 text-sm focus:outline-none focus:border-[#BFA05A] focus:bg-white transition-colors"
+            className="w-full h-[54px] bg-[#F8F7F2] border border-[#E5E2D9] rounded text-[#142033] px-4 text-sm focus:outline-none focus:border-[#145A4A] focus:bg-white transition-colors"
           />
         </div>
 
         <div>
-          <label className="block text-[10px] uppercase tracking-[0.18em] text-[#667085] mb-2">
+          <label className="block text-[10px] uppercase tracking-[0.18em] text-[#64748B] mb-2">
             Address
           </label>
           <textarea
@@ -120,14 +120,14 @@ const ProfileForm = () => {
             onChange={handleChange}
             required
             rows={3}
-            className="w-full bg-[#F7F5EF] border border-[#E5E1D8] rounded text-[#172033] px-4 py-3 text-sm focus:outline-none focus:border-[#BFA05A] focus:bg-white transition-colors"
+            className="w-full bg-[#F8F7F2] border border-[#E5E2D9] rounded text-[#142033] px-4 py-3 text-sm focus:outline-none focus:border-[#145A4A] focus:bg-white transition-colors"
           />
         </div>
 
         <button
           type="submit"
           disabled={loading}
-          className="mt-2 h-[44px] w-full sm:w-fit sm:px-8 bg-[#BFA05A] hover:bg-[#AC8D48] text-[#172033] text-[13px] font-semibold uppercase tracking-[0.15em] rounded transition-colors disabled:opacity-50"
+          className="mt-2 h-[44px] w-full sm:w-fit sm:px-8 bg-[#145A4A] hover:bg-[#0D3F35] text-white text-[13px] font-semibold uppercase tracking-[0.15em] rounded transition-colors disabled:opacity-50"
         >
           {loading ? "Saving..." : "Save Changes"}
         </button>

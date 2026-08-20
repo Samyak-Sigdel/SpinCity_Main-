@@ -15,7 +15,7 @@ import ProfilePage from "./Pages/ProfilePage";
 
 const App = () => {
   return (
-    <div className="bg-[#F7F5EF] min-h-screen flex flex-col">
+    <div className="bg-[#F8F7F2] min-h-screen flex flex-col">
       <ToastContainer position="top-right" />
       <Navbar />
 

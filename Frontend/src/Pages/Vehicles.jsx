@@ -7,41 +7,64 @@ import LocationPickerModal from "../Components/LocationPickerModal";
 import { VEHICLE_CATEGORIES } from "../Context/CustomerContext";
 
 const SORT_OPTIONS = [
-  { value: "popular", label: "Most Popular" },
+  { value: "popular", label: "Most popular" },
   { value: "price_asc", label: "Price: Low to High" },
   { value: "price_desc", label: "Price: High to Low" },
-  { value: "distance", label: "Nearest First" },
+  { value: "distance", label: "Nearest first" },
 ];
 
 const Vehicles = () => {
   const backendUrl = import.meta.env.VITE_BACKENDURL;
+
   const [searchParams, setSearchParams] = useSearchParams();
+
   const [vehicles, setVehicles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [locationModalOpen, setLocationModalOpen] = useState(false);
 
-  const [searchTerm, setSearchTerm] = useState(searchParams.get("search") || "");
-  const activeAddress = searchParams.get("address") || "";
-  const activeLat = searchParams.get("lat");
-  const activeLng = searchParams.get("lng");
+  const [searchTerm, setSearchTerm] = useState(
+    searchParams.get("search") || ""
+  );
 
   const [sortBy, setSortBy] = useState("popular");
   const [priceMin, setPriceMin] = useState("");
   const [priceMax, setPriceMax] = useState("");
-  const [selectedVendors, setSelectedVendors] = useState([]);
   const [selectedTypes, setSelectedTypes] = useState([]);
+
+  /* =========================================================
+     ACTIVE SEARCH PARAMS
+  ========================================================= */
+
+  const activeAddress = searchParams.get("address") || "";
+  const activeLat = searchParams.get("lat");
+  const activeLng = searchParams.get("lng");
+
+  /* =========================================================
+     FETCH VEHICLES
+  ========================================================= */
 
   const fetchVehicles = async () => {
     setLoading(true);
+
     try {
       const params = {};
-      if (searchParams.get("search")) params.search = searchParams.get("search");
+
+      const search = searchParams.get("search");
+
+      if (search) {
+        params.search = search;
+      }
+
       if (activeLat && activeLng) {
         params.lat = activeLat;
         params.lng = activeLng;
       }
 
-      const { data } = await axios.get(backendUrl + "/api/user/products", { params });
+      const { data } = await axios.get(
+        `${backendUrl}/api/user/products`,
+        { params }
+      );
+
       if (data.success) {
         setVehicles(data.products);
       } else {
@@ -57,60 +80,85 @@ const Vehicles = () => {
 
   useEffect(() => {
     fetchVehicles();
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams]);
 
+  /* =========================================================
+     SEARCH
+  ========================================================= */
+
   const handleSearchSubmit = (e) => {
     e.preventDefault();
+
     const params = Object.fromEntries(searchParams);
-    if (searchTerm) params.search = searchTerm;
-    else delete params.search;
+
+    if (searchTerm.trim()) {
+      params.search = searchTerm.trim();
+    } else {
+      delete params.search;
+    }
+
     setSearchParams(params);
   };
 
+  /* =========================================================
+     LOCATION
+  ========================================================= */
+
   const handleLocationConfirm = (place) => {
     const params = Object.fromEntries(searchParams);
+
     params.lat = place.lat;
     params.lng = place.lon;
     params.address = place.address;
+
     setSearchParams(params);
+    setLocationModalOpen(false);
   };
 
   const clearLocation = () => {
     const params = Object.fromEntries(searchParams);
+
     delete params.lat;
     delete params.lng;
     delete params.address;
+
     setSearchParams(params);
   };
 
-  const availableVendors = useMemo(() => {
-    const names = new Set();
-    vehicles.forEach((v) => v.owner?.shopName && names.add(v.owner.shopName));
-    return Array.from(names);
-  }, [vehicles]);
-
-  const toggleVendor = (name) => {
-    setSelectedVendors((prev) =>
-      prev.includes(name) ? prev.filter((v) => v !== name) : [...prev, name]
-    );
-  };
+  /* =========================================================
+     FILTERS
+  ========================================================= */
 
   const toggleType = (type) => {
     setSelectedTypes((prev) =>
-      prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
+      prev.includes(type)
+        ? prev.filter((item) => item !== type)
+        : [...prev, type]
     );
   };
 
   const priceBounds = useMemo(() => {
-    if (vehicles.length === 0) return { min: 0, max: 0 };
-    const prices = vehicles.map((v) => v.pricePerDay);
-    return { min: Math.min(...prices), max: Math.max(...prices) };
+    if (!vehicles.length) {
+      return {
+        min: 0,
+        max: 0,
+      };
+    }
+
+    const prices = vehicles.map(
+      (vehicle) => vehicle.pricePerDay
+    );
+
+    return {
+      min: Math.min(...prices),
+      max: Math.max(...prices),
+    };
   }, [vehicles]);
 
   const hasActiveFilters =
     selectedTypes.length > 0 ||
-    selectedVendors.length > 0 ||
     priceMin !== "" ||
     priceMax !== "" ||
     !!searchTerm ||
@@ -118,274 +166,802 @@ const Vehicles = () => {
 
   const clearAllFilters = () => {
     setSelectedTypes([]);
-    setSelectedVendors([]);
     setPriceMin("");
     setPriceMax("");
     setSearchTerm("");
+
     const params = Object.fromEntries(searchParams);
+
     delete params.search;
     delete params.lat;
     delete params.lng;
     delete params.address;
+
     setSearchParams(params);
   };
+
+  /* =========================================================
+     FILTER + SORT
+  ========================================================= */
 
   const displayedVehicles = useMemo(() => {
     let result = [...vehicles];
 
+    // Vehicle type
     if (selectedTypes.length > 0) {
-      result = result.filter((v) => selectedTypes.includes(v.category));
-    }
-    if (selectedVendors.length > 0) {
-      result = result.filter((v) => selectedVendors.includes(v.owner?.shopName));
-    }
-    if (priceMin !== "") {
-      result = result.filter((v) => v.pricePerDay >= Number(priceMin));
-    }
-    if (priceMax !== "") {
-      result = result.filter((v) => v.pricePerDay <= Number(priceMax));
+      result = result.filter((vehicle) =>
+        selectedTypes.includes(vehicle.category)
+      );
     }
 
+    // Minimum price
+    if (priceMin !== "") {
+      result = result.filter(
+        (vehicle) =>
+          vehicle.pricePerDay >= Number(priceMin)
+      );
+    }
+
+    // Maximum price
+    if (priceMax !== "") {
+      result = result.filter(
+        (vehicle) =>
+          vehicle.pricePerDay <= Number(priceMax)
+      );
+    }
+
+    // Sorting
     if (sortBy === "price_asc") {
-      result.sort((a, b) => a.pricePerDay - b.pricePerDay);
-    } else if (sortBy === "price_desc") {
-      result.sort((a, b) => b.pricePerDay - a.pricePerDay);
-    } else if (sortBy === "distance") {
-      result.sort((a, b) => (a.distanceMeters ?? Infinity) - (b.distanceMeters ?? Infinity));
+      result.sort(
+        (a, b) => a.pricePerDay - b.pricePerDay
+      );
+    }
+
+    if (sortBy === "price_desc") {
+      result.sort(
+        (a, b) => b.pricePerDay - a.pricePerDay
+      );
+    }
+
+    if (sortBy === "distance") {
+      result.sort(
+        (a, b) =>
+          (a.distanceMeters ?? Infinity) -
+          (b.distanceMeters ?? Infinity)
+      );
     }
 
     return result;
-  }, [vehicles, selectedTypes, selectedVendors, priceMin, priceMax, sortBy]);
+  }, [
+    vehicles,
+    selectedTypes,
+    priceMin,
+    priceMax,
+    sortBy,
+  ]);
+
+  /* =========================================================
+     UI
+  ========================================================= */
 
   return (
-    <div className="bg-[#F7F5EF] min-h-screen">
-      <div className="max-w-[1280px] mx-auto px-6 md:px-10 py-12">
-        <div className="flex items-center gap-3 mb-2">
-          <span className="w-8 h-px bg-[#C9A24D]" />
-          <span className="text-[10px] uppercase tracking-[0.25em] text-[#C9A24D]">
-            SpinCity
-          </span>
-        </div>
-        <h1 className="font-serif text-3xl md:text-4xl font-semibold text-[#172033] mb-2">
-          All Vehicles
-        </h1>
-        {activeAddress && (
-          <p className="text-sm text-[#667085] mb-6">
-            Showing vehicles near{" "}
-            <span className="text-[#172033] font-medium">{activeAddress}</span>{" "}
-            <button onClick={clearLocation} className="text-[#C9A24D] underline text-xs ml-1">
-              clear
-            </button>
-          </p>
-        )}
+    <div className="min-h-screen bg-[#F6F7F5]">
 
-        <div className="grid grid-cols-1 lg:grid-cols-[260px_1fr] gap-8 mt-8">
-          {/* Sidebar */}
-          <aside className="space-y-5 bg-white border border-[#E5E1D8] rounded-[8px] p-5 h-fit shadow-[0_2px_8px_rgba(23,32,51,0.06)]">
-            <div className="flex items-center justify-between">
-              <p className="text-[11px] uppercase tracking-[0.14em] font-semibold text-[#344054]">
-                Filters
-              </p>
+      <div
+        className="
+          mx-auto
+          max-w-[1320px]
+          px-4
+          sm:px-6
+          lg:px-8
+          pt-5
+          pb-8
+        "
+      >
+
+        {/* =====================================================
+            MAIN LAYOUT
+        ===================================================== */}
+
+        <div
+          className="
+            grid
+            grid-cols-1
+            lg:grid-cols-[320px_minmax(0,1fr)]
+            gap-8
+            items-start
+          "
+        >
+
+          {/* ===================================================
+              FILTER SIDEBAR
+          =================================================== */}
+
+          <aside
+            className="
+              bg-white
+              border
+              border-[#E5E5DE]
+              rounded-xl
+              p-6
+              h-fit
+              shadow-[0_1px_3px_rgba(16,24,40,0.04)]
+            "
+          >
+
+            {/* =================================================
+                FILTER HEADER
+            ================================================= */}
+
+            <div className="flex items-center justify-between mb-6">
+
+              <div>
+                <p
+                  className="
+                    text-base
+                    font-semibold
+                    text-[#172033]
+                  "
+                >
+                  Filters
+                </p>
+
+                <p
+                  className="
+                    text-sm
+                    text-[#98A2B3]
+                    mt-1
+                  "
+                >
+                  Refine your search
+                </p>
+              </div>
+
               {hasActiveFilters && (
                 <button
                   onClick={clearAllFilters}
-                  className="text-[11px] text-[#C9A24D] underline"
+                  className="
+                    text-sm
+                    font-medium
+                    text-[#08785F]
+                    hover:underline
+                  "
                 >
                   Clear all
                 </button>
               )}
+
             </div>
 
-            {/* Pickup location */}
-            <div>
-              <p className="text-[11px] uppercase tracking-[0.14em] font-semibold text-[#344054] mb-2">
+            {/* =================================================
+                PICKUP LOCATION
+            ================================================= */}
+
+            <div className="mb-6">
+
+              <p
+                className="
+                  text-sm
+                  font-semibold
+                  text-[#344054]
+                  mb-2.5
+                "
+              >
                 Pickup location
               </p>
+
               <button
-                onClick={() => setLocationModalOpen(true)}
-                className="flex items-center gap-2 border border-[#E5E1D8] bg-[#F7F5EF] rounded-[4px] px-4 py-3 w-full text-left hover:border-[#C9A24D] transition-colors"
+                onClick={() =>
+                  setLocationModalOpen(true)
+                }
+                className="
+                  w-full
+                  min-h-11
+                  flex
+                  items-center
+                  gap-2.5
+                  px-3.5
+                  py-2.5
+                  bg-[#FAFAF7]
+                  border
+                  border-[#E5E5DE]
+                  rounded-md
+                  text-left
+                  hover:border-[#08785F]
+                  transition-colors
+                "
               >
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="shrink-0">
+
+                {/* Location Icon */}
+
+                <svg
+                  width="17"
+                  height="17"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  className="shrink-0"
+                >
                   <path
-                    d="M8 14.5s5-4.4 5-8.5a5 5 0 10-10 0c0 4.1 5 8.5 5 8.5z"
-                    stroke="#C9A24D"
-                    strokeWidth="1.5"
+                    d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z"
+                    stroke="#08785F"
+                    strokeWidth="2"
                   />
-                  <circle cx="8" cy="6" r="1.8" stroke="#C9A24D" strokeWidth="1.5" />
+
+                  <circle
+                    cx="12"
+                    cy="10"
+                    r="2.5"
+                    stroke="#08785F"
+                    strokeWidth="2"
+                  />
                 </svg>
-                <span className="text-sm text-[#172033] truncate">
-                  {activeAddress || "Where are you renting?"}
+
+                <span
+                  className="
+                    text-base
+                    leading-5
+                    truncate
+                    text-[#344054]
+                  "
+                >
+                  {activeAddress ||
+                    "Select pickup location"}
                 </span>
+
               </button>
+
+              {activeAddress && (
+                <button
+                  onClick={clearLocation}
+                  className="
+                    mt-2
+                    text-sm
+                    text-[#667085]
+                    hover:text-[#08785F]
+                  "
+                >
+                  Remove location
+                </button>
+              )}
+
             </div>
+
+            {/* =================================================
+                LOCATION MODAL
+            ================================================= */}
 
             <LocationPickerModal
               isOpen={locationModalOpen}
-              onClose={() => setLocationModalOpen(false)}
+              onClose={() =>
+                setLocationModalOpen(false)
+              }
               onConfirm={handleLocationConfirm}
               initialAddress={activeAddress}
             />
 
-            {/* Search vehicles */}
-            <div>
-              <p className="text-[11px] uppercase tracking-[0.14em] font-semibold text-[#344054] mb-2">
-                Search
+            {/* =================================================
+                SEARCH
+            ================================================= */}
+
+            <div className="mb-6">
+
+              <p
+                className="
+                  text-sm
+                  font-semibold
+                  text-[#344054]
+                  mb-2.5
+                "
+              >
+                Search vehicles
               </p>
+
               <form onSubmit={handleSearchSubmit}>
+
                 <input
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  placeholder="Honda, Activa, scooter..."
-                  className="w-full bg-[#F7F5EF] border border-[#E5E1D8] rounded-[4px] text-[#172033] placeholder:text-[#98A2B3] px-4 py-2.5 text-sm focus:outline-none focus:border-[#C9A24D]"
+                  onChange={(e) =>
+                    setSearchTerm(e.target.value)
+                  }
+                  placeholder="Search by name or model"
+                  className="
+                    w-full
+                    h-11
+                    px-3.5
+                    bg-[#FAFAF7]
+                    border
+                    border-[#E5E5DE]
+                    rounded-md
+                    text-base
+                    text-[#172033]
+                    placeholder:text-[#98A2B3]
+                    outline-none
+                    focus:border-[#08785F]
+                    transition-colors
+                  "
                 />
+
               </form>
+
             </div>
 
-            {/* Price range */}
-            <div>
-              <p className="text-[11px] uppercase tracking-[0.14em] font-semibold text-[#344054] mb-2">
-                Price per day
+            {/* =================================================
+                DAILY PRICE
+            ================================================= */}
+
+            <div className="mb-6">
+
+              <p
+                className="
+                  text-sm
+                  font-semibold
+                  text-[#344054]
+                  mb-2.5
+                "
+              >
+                Daily price
               </p>
-              <div className="flex items-center gap-2">
-                <div className="relative w-1/2">
-                  <span className="absolute left-2 top-1/2 -translate-y-1/2 text-[11px] text-[#98A2B3]">
+
+              <div className="flex items-center gap-2.5">
+
+                {/* MIN PRICE */}
+
+                <div className="relative flex-1">
+
+                  <span
+                    className="
+                      absolute
+                      left-3
+                      top-1/2
+                      -translate-y-1/2
+                      text-sm
+                      text-[#98A2B3]
+                    "
+                  >
                     Rs.
                   </span>
+
                   <input
                     type="number"
                     min="0"
                     value={priceMin}
-                    onChange={(e) => setPriceMin(e.target.value)}
-                    placeholder={priceBounds.min ? String(priceBounds.min) : "Min"}
-                    className="w-full bg-[#F7F5EF] border border-[#E5E1D8] rounded-[4px] text-[#172033] placeholder:text-[#98A2B3] pl-7 pr-2 py-2 text-xs focus:outline-none focus:border-[#C9A24D]"
+                    onChange={(e) =>
+                      setPriceMin(e.target.value)
+                    }
+                    placeholder={
+                      priceBounds.min
+                        ? String(priceBounds.min)
+                        : "Min"
+                    }
+                    className="
+                      w-full
+                      h-11
+                      pl-9
+                      pr-2
+                      bg-[#FAFAF7]
+                      border
+                      border-[#E5E5DE]
+                      rounded-md
+                      text-base
+                      text-[#172033]
+                      outline-none
+                      focus:border-[#08785F]
+                    "
                   />
+
                 </div>
-                <span className="text-[#667085] text-xs">–</span>
-                <div className="relative w-1/2">
-                  <span className="absolute left-2 top-1/2 -translate-y-1/2 text-[11px] text-[#98A2B3]">
+
+                <span
+                  className="
+                    text-sm
+                    text-[#98A2B3]
+                    shrink-0
+                  "
+                >
+                  –
+                </span>
+
+                {/* MAX PRICE */}
+
+                <div className="relative flex-1">
+
+                  <span
+                    className="
+                      absolute
+                      left-3
+                      top-1/2
+                      -translate-y-1/2
+                      text-sm
+                      text-[#98A2B3]
+                    "
+                  >
                     Rs.
                   </span>
+
                   <input
                     type="number"
                     min="0"
                     value={priceMax}
-                    onChange={(e) => setPriceMax(e.target.value)}
-                    placeholder={priceBounds.max ? String(priceBounds.max) : "Max"}
-                    className="w-full bg-[#F7F5EF] border border-[#E5E1D8] rounded-[4px] text-[#172033] placeholder:text-[#98A2B3] pl-7 pr-2 py-2 text-xs focus:outline-none focus:border-[#C9A24D]"
+                    onChange={(e) =>
+                      setPriceMax(e.target.value)
+                    }
+                    placeholder={
+                      priceBounds.max
+                        ? String(priceBounds.max)
+                        : "Max"
+                    }
+                    className="
+                      w-full
+                      h-11
+                      pl-9
+                      pr-2
+                      bg-[#FAFAF7]
+                      border
+                      border-[#E5E5DE]
+                      rounded-md
+                      text-base
+                      text-[#172033]
+                      outline-none
+                      focus:border-[#08785F]
+                    "
                   />
+
                 </div>
+
               </div>
+
             </div>
 
-            {/* Vendor */}
-            {availableVendors.length > 0 && (
-              <div>
-                <p className="text-[11px] uppercase tracking-[0.14em] font-semibold text-[#344054] mb-2">
-                  Vendor
-                </p>
-                <label className="flex items-center gap-2 text-sm text-[#172033] mb-1.5 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={selectedVendors.length === 0}
-                    onChange={() => setSelectedVendors([])}
-                    className="accent-[#C9A24D]"
-                  />
-                  All Vendors
-                </label>
-                {availableVendors.map((name) => (
-                  <label
-                    key={name}
-                    className="flex items-center gap-2 text-sm text-[#344054] mb-1.5 cursor-pointer"
-                  >
-                    <input
-                      type="checkbox"
-                      checked={selectedVendors.includes(name)}
-                      onChange={() => toggleVendor(name)}
-                      className="accent-[#C9A24D]"
-                    />
-                    {name}
-                  </label>
-                ))}
-              </div>
-            )}
+            {/* =================================================
+                VEHICLE TYPE
+            ================================================= */}
 
-            {/* Vehicle type */}
             <div>
-              <p className="text-[11px] uppercase tracking-[0.14em] font-semibold text-[#344054] mb-2">
-                Vehicle Type
+
+              <p
+                className="
+                  text-sm
+                  font-semibold
+                  text-[#344054]
+                  mb-3.5
+                "
+              >
+                Vehicle type
               </p>
-              <label className="flex items-center gap-2 text-sm text-[#172033] mb-1.5 cursor-pointer">
+
+              {/* ALL VEHICLES */}
+
+              <label
+                className="
+                  flex
+                  items-center
+                  gap-3
+                  text-base
+                  text-[#344054]
+                  mb-3
+                  cursor-pointer
+                "
+              >
+
                 <input
                   type="checkbox"
                   checked={selectedTypes.length === 0}
-                  onChange={() => setSelectedTypes([])}
-                  className="accent-[#C9A24D]"
+                  onChange={() =>
+                    setSelectedTypes([])
+                  }
+                  className="
+                    accent-[#08785F]
+                    h-5
+                    w-5
+                    shrink-0
+                  "
                 />
-                All Types
+
+                <span>All vehicles</span>
+
               </label>
+
+              {/* VEHICLE CATEGORIES */}
+
               {VEHICLE_CATEGORIES.map((type) => (
+
                 <label
                   key={type}
-                  className="flex items-center gap-2 text-sm text-[#344054] mb-1.5 cursor-pointer"
+                  className="
+                    flex
+                    items-center
+                    gap-3
+                    text-base
+                    text-[#344054]
+                    mb-3
+                    cursor-pointer
+                  "
                 >
+
                   <input
                     type="checkbox"
                     checked={selectedTypes.includes(type)}
-                    onChange={() => toggleType(type)}
-                    className="accent-[#C9A24D]"
+                    onChange={() =>
+                      toggleType(type)
+                    }
+                    className="
+                      accent-[#08785F]
+                      h-5
+                      w-5
+                      shrink-0
+                    "
                   />
-                  {type}
+
+                  <span>{type}</span>
+
                 </label>
+
               ))}
+
             </div>
+
           </aside>
 
-          {/* Results */}
-          <div>
-            {/* Results header: count + sort (moved out of sidebar per audit #11) */}
-            <div className="flex items-center justify-between mb-4">
-              <p className="text-sm font-medium text-[#172033]">
-                {loading ? "Loading..." : `${displayedVehicles.length} vehicle${displayedVehicles.length !== 1 ? "s" : ""} found`}
-              </p>
-              <div className="flex items-center gap-2">
-                <label htmlFor="sort" className="text-xs text-[#667085] hidden sm:inline">
-                  Sort:
-                </label>
+          {/* ===================================================
+              RESULTS SECTION
+          =================================================== */}
+
+          <section className="min-w-0">
+
+            {/* =================================================
+                RESULTS HEADER
+            ================================================= */}
+
+            <div
+              className="
+                flex
+                items-center
+                justify-between
+                mb-5
+                pb-4
+                border-b
+                border-[#E8E8E1]
+                gap-4
+              "
+            >
+
+              {/* TITLE */}
+
+              <div className="min-w-0">
+
+                <h1
+                  className="
+                    font-['Oswald']
+                    font-semibold
+                    text-2xl
+                    sm:text-3xl
+                    leading-[1.05]
+                    tracking-[-0.02em]
+                    text-[#172033]
+                  "
+                >
+                  All Vehicles
+                </h1>
+
+                <p
+                  className="
+                    mt-1.5
+                    text-base
+                    text-[#667085]
+                  "
+                >
+                  {loading
+                    ? "Finding available vehicles..."
+                    : `${displayedVehicles.length} ${
+                        displayedVehicles.length === 1
+                          ? "vehicle"
+                          : "vehicles"
+                      } available`}
+                </p>
+
+              </div>
+
+              {/* SORT */}
+
+              <div className="flex items-center shrink-0">
+
                 <select
                   id="sort"
                   value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value)}
-                  className="bg-white border border-[#E5E1D8] rounded-[4px] text-[#172033] px-3 py-2 text-sm focus:outline-none focus:border-[#C9A24D]"
+                  onChange={(e) =>
+                    setSortBy(e.target.value)
+                  }
+                  className="
+                    h-11
+                    min-w-[180px]
+                    bg-white
+                    border
+                    border-[#E5E5DE]
+                    rounded-md
+                    px-3.5
+                    text-base
+                    text-[#172033]
+                    outline-none
+                    focus:border-[#08785F]
+                    cursor-pointer
+                  "
                 >
-                  {SORT_OPTIONS.map((opt) => (
-                    <option key={opt.value} value={opt.value}>
-                      {opt.label}
+
+                  {SORT_OPTIONS.map((option) => (
+
+                    <option
+                      key={option.value}
+                      value={option.value}
+                    >
+                      {option.label}
                     </option>
+
                   ))}
+
                 </select>
+
               </div>
+
             </div>
 
+            {/* =================================================
+                LOADING STATE
+            ================================================= */}
+
             {loading ? (
-              <p className="text-sm text-[#667085]">Loading vehicles...</p>
-            ) : displayedVehicles.length === 0 ? (
-              <div className="border border-dashed border-[#E5E1D8] rounded-[8px] py-16 text-center bg-white">
-                <p className="text-[#667085] text-sm">
-                  {activeAddress
-                    ? "No vehicles available near this location."
-                    : "No vehicles match your filters."}
+
+              <div
+                className="
+                  bg-white
+                  border
+                  border-[#E5E5DE]
+                  rounded-xl
+                  py-14
+                  text-center
+                "
+              >
+
+                <div
+                  className="
+                    mx-auto
+                    mb-3
+                    h-7
+                    w-7
+                    rounded-full
+                    border-2
+                    border-[#D6E5E0]
+                    border-t-[#08785F]
+                    animate-spin
+                  "
+                />
+
+                <p
+                  className="
+                    text-base
+                    text-[#667085]
+                  "
+                >
+                  Finding vehicles...
                 </p>
+
               </div>
+
+            ) : displayedVehicles.length === 0 ? (
+
+              /* =================================================
+                 EMPTY STATE
+              ================================================= */
+
+              <div
+                className="
+                  bg-white
+                  border
+                  border-dashed
+                  border-[#E5E5DE]
+                  rounded-xl
+                  py-16
+                  px-6
+                  text-center
+                "
+              >
+
+                <div
+                  className="
+                    mx-auto
+                    mb-4
+                    flex
+                    h-12
+                    w-12
+                    items-center
+                    justify-center
+                    rounded-full
+                    bg-[#F0F7F4]
+                  "
+                >
+
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                  >
+                    <path
+                      d="M3 13h18M5 13l1.5-6h11L19 13M6 13v5m12-5v5M8 18h8"
+                      stroke="#08785F"
+                      strokeWidth="1.8"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+
+                </div>
+
+                <h3
+                  className="
+                    text-base
+                    font-semibold
+                    text-[#172033]
+                  "
+                >
+                  No vehicles found
+                </h3>
+
+                <p
+                  className="
+                    mt-1.5
+                    text-base
+                    text-[#667085]
+                  "
+                >
+                  {activeAddress
+                    ? "No vehicles are available at this location."
+                    : "Try adjusting your search or filters."}
+                </p>
+
+                {hasActiveFilters && (
+                  <button
+                    onClick={clearAllFilters}
+                    className="
+                      mt-4
+                      text-base
+                      font-medium
+                      text-[#08785F]
+                      hover:underline
+                    "
+                  >
+                    Clear filters
+                  </button>
+                )}
+
+              </div>
+
             ) : (
+
+              /* =================================================
+                 VEHICLE LIST
+              ================================================= */
+
               <div className="flex flex-col gap-4">
+
                 {displayedVehicles.map((vehicle) => (
-                  <VehicleCard key={vehicle._id} vehicle={vehicle} />
+
+                  <VehicleCard
+                    key={vehicle._id}
+                    vehicle={vehicle}
+                  />
+
                 ))}
+
               </div>
+
             )}
-          </div>
+
+          </section>
+
         </div>
+
       </div>
+
     </div>
   );
 };

@@ -3,6 +3,21 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { CustomerContext } from "../Context/CustomerContext";
+import PopularVehicles from "../Components/PopularVehicles";
+
+const COLORS = {
+  bg: "#F7F7F3",
+  white: "#FFFFFF",
+  emerald: "#08785F",
+  emeraldDark: "#06654F",
+  emeraldLight: "#E8F3EF",
+  navy: "#172033",
+  text: "#344054",
+  muted: "#667085",
+  border: "#E5E5DE",
+  input: "#FAFAF7",
+  danger: "#C75C5C",
+};
 
 const VehicleDetails = () => {
   const { productId } = useParams();
@@ -16,10 +31,16 @@ const VehicleDetails = () => {
   const [endDate, setEndDate] = useState("");
   const [quantity, setQuantity] = useState(1);
 
+  const [popularVehicles, setPopularVehicles] = useState([]);
+
   const fetchVehicle = async () => {
     setLoading(true);
+
     try {
-      const { data } = await axios.get(backendUrl + `/api/user/products/${productId}`);
+      const { data } = await axios.get(
+        backendUrl + `/api/user/products/${productId}`
+      );
+
       if (data.success) {
         setVehicle(data.product);
       } else {
@@ -33,24 +54,72 @@ const VehicleDetails = () => {
     }
   };
 
+  const fetchPopularVehicles = async () => {
+    try {
+      const { data } = await axios.get(
+        backendUrl + "/api/user/products"
+      );
+
+      if (data.success) {
+        setPopularVehicles(
+          data.products
+            .filter((p) => p._id !== productId)
+            .slice(0, 4)
+        );
+      }
+    } catch (error) {
+      console.error(
+        "Error fetching vehicles:",
+        error
+      );
+    }
+  };
+
   useEffect(() => {
     fetchVehicle();
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [productId]);
 
+  useEffect(() => {
+    if (backendUrl) {
+      fetchPopularVehicles();
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [backendUrl, productId]);
+
   const totalDays =
     startDate && endDate
-      ? Math.ceil((new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24))
+      ? Math.ceil(
+          (new Date(endDate) - new Date(startDate)) /
+            (1000 * 60 * 60 * 24)
+        )
       : 0;
 
-  const rentalSubtotal = vehicle && totalDays > 0 ? vehicle.pricePerDay * totalDays * quantity : 0;
+  const rentalSubtotal =
+    vehicle && totalDays > 0
+      ? vehicle.pricePerDay * totalDays * quantity
+      : 0;
 
-  const isAvailable = vehicle && vehicle.quantityAvailable > 0;
-  const showQuantityField = vehicle && vehicle.quantityAvailable > 1;
+  const isAvailable =
+    vehicle && vehicle.quantityAvailable > 0;
 
-  const decrementQty = () => setQuantity((q) => Math.max(1, q - 1));
-  const incrementQty = () =>
-    setQuantity((q) => Math.min(vehicle?.quantityAvailable ?? 1, q + 1));
+  const showQuantityField =
+    vehicle && vehicle.quantityAvailable > 1;
+
+  const decrementQty = () => {
+    setQuantity((q) => Math.max(1, q - 1));
+  };
+
+  const incrementQty = () => {
+    setQuantity((q) =>
+      Math.min(
+        vehicle?.quantityAvailable ?? 1,
+        q + 1
+      )
+    );
+  };
 
   const handleBooking = (e) => {
     e.preventDefault();
@@ -67,154 +136,504 @@ const VehicleDetails = () => {
     }
 
     navigate(`/checkout/${productId}`, {
-      state: { startDate, endDate, quantity },
+      state: {
+        startDate,
+        endDate,
+        quantity,
+      },
     });
   };
 
   if (loading) {
     return (
-      <div className="bg-[#F7F5EF] min-h-screen">
-        <p className="text-sm text-[#667085] p-8 text-center">Loading vehicle...</p>
+      <div
+        className="min-h-screen flex items-center justify-center"
+        style={{ backgroundColor: COLORS.bg }}
+      >
+        <p
+          className="text-sm"
+          style={{ color: COLORS.muted }}
+        >
+          Loading vehicle...
+        </p>
       </div>
     );
   }
 
   if (!vehicle) {
     return (
-      <div className="bg-[#F7F5EF] min-h-screen">
-        <p className="text-sm text-[#667085] p-8 text-center">Vehicle not found.</p>
+      <div
+        className="min-h-screen flex items-center justify-center"
+        style={{ backgroundColor: COLORS.bg }}
+      >
+        <p
+          className="text-sm"
+          style={{ color: COLORS.muted }}
+        >
+          Vehicle not found.
+        </p>
       </div>
     );
   }
 
   return (
-    <div className="bg-[#F7F5EF] min-h-screen">
-      <div className="max-w-[1280px] mx-auto px-6 md:px-10 py-10">
-        {/* Breadcrumb */}
-        <nav className="text-xs text-[#667085] mb-6 flex items-center gap-1.5 flex-wrap">
-          <Link to="/" className="hover:text-[#C9A24D] transition-colors">
+    <div
+      className="min-h-screen"
+      style={{ backgroundColor: COLORS.bg }}
+    >
+      <div className="max-w-[1220px] mx-auto px-6 md:px-8 py-7">
+
+        {/* =====================================================
+            BREADCRUMB
+        ===================================================== */}
+        <nav
+          className="
+            flex
+            items-center
+            gap-[8px]
+            flex-wrap
+            text-[14px]
+            mb-[22px]
+          "
+          style={{ color: COLORS.muted }}
+        >
+          <Link
+            to="/"
+            className="hover:text-[#08785F] transition-colors"
+          >
             Home
           </Link>
+
           <span>/</span>
-          <Link to="/vehicles" className="hover:text-[#C9A24D] transition-colors">
+
+          <Link
+            to="/vehicles"
+            className="hover:text-[#08785F] transition-colors"
+          >
             Fleet
           </Link>
+
           <span>/</span>
-          <span className="text-[#344054]">{vehicle.category}</span>
+
+          <span>{vehicle.category}</span>
+
           <span>/</span>
-          <span className="text-[#172033] font-medium">{vehicle.name}</span>
+
+          <span
+            className="font-medium"
+            style={{ color: COLORS.navy }}
+          >
+            {vehicle.name}
+          </span>
         </nav>
 
-        {/* Hero: image + buy box side by side */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-          {/* Image — thumbnail rail + main image, sized down from the previous full-width block */}
-          <div className="flex gap-3 h-[420px]">
-            <div className="flex flex-col gap-3 w-[90px] shrink-0">
-              {[0, 1, 2, 3].map((i) => (
+        {/* =====================================================
+            MAIN VEHICLE SECTION
+        ===================================================== */}
+        <div
+          className="
+            grid
+            grid-cols-1
+            lg:grid-cols-[minmax(0,1.08fr)_minmax(0,0.92fr)]
+            gap-[42px]
+          "
+        >
+
+          {/* =================================================
+              LEFT — VEHICLE IMAGES
+          ================================================= */}
+          <div className="flex gap-[12px] h-[400px]">
+
+            {/* Thumbnail column */}
+            <div className="w-[88px] shrink-0 flex flex-col gap-[10px]">
+
+              {[0, 1, 2, 3].map((index) => (
                 <div
-                  key={i}
-                  className="flex-1 bg-white border border-[#E5E1D8] rounded-[8px] overflow-hidden flex items-center justify-center p-1.5 cursor-pointer hover:border-[#C9A24D] transition-colors"
+                  key={index}
+                  className="
+                    flex-1
+                    bg-white
+                    border
+                    rounded-[7px]
+                    overflow-hidden
+                    flex
+                    items-center
+                    justify-center
+                    cursor-pointer
+                    transition-all
+                    duration-200
+                  "
+                  style={{
+                    borderColor:
+                      index === 0
+                        ? COLORS.emerald
+                        : COLORS.border,
+                  }}
                 >
                   <img
                     src={vehicle.image}
-                    alt={`${vehicle.name} thumbnail ${i + 1}`}
-                    className="w-full h-full object-contain"
+                    alt={`${vehicle.name} thumbnail ${
+                      index + 1
+                    }`}
+                    className="
+                      w-full
+                      h-full
+                      object-contain
+                      p-[5px]
+                    "
                   />
                 </div>
               ))}
             </div>
-            <div className="flex-1 bg-white border border-[#E5E1D8] rounded-[8px] shadow-[0_2px_8px_rgba(23,32,51,0.06)] overflow-hidden flex items-center justify-center p-2">
+
+            {/* Main vehicle image */}
+            <div
+              className="
+                flex-1
+                bg-white
+                border
+                rounded-[7px]
+                overflow-hidden
+                flex
+                items-center
+                justify-center
+              "
+              style={{
+                borderColor: COLORS.border,
+              }}
+            >
               <img
                 src={vehicle.image}
                 alt={vehicle.name}
-                className="w-full h-full object-contain"
+                className="
+                  w-full
+                  h-full
+                  object-contain
+                  p-[12px]
+                  transition-transform
+                  duration-500
+                  hover:scale-[1.015]
+                "
               />
             </div>
           </div>
 
-          {/* Title + price + booking, together in the right column */}
-          <div>
-            <div className="flex items-center gap-3 mb-1">
-              <span className="w-8 h-px bg-[#C9A24D]" />
-              <p className="text-[10px] uppercase tracking-[0.25em] text-[#C9A24D]">
+          {/* =================================================
+              RIGHT — VEHICLE INFORMATION
+          ================================================= */}
+          <div className="pt-[2px]">
+
+            {/* Category */}
+            <div className="flex items-center gap-[12px] mb-[5px]">
+              <span
+                className="w-[34px] h-px"
+                style={{
+                  backgroundColor: COLORS.emerald,
+                }}
+              />
+
+              <span
+                className="
+                  text-[10px]
+                  uppercase
+                  tracking-[0.24em]
+                  font-medium
+                "
+                style={{
+                  color: COLORS.emerald,
+                }}
+              >
                 {vehicle.category}
-              </p>
+              </span>
             </div>
-            <h1 className="font-serif text-3xl md:text-4xl font-semibold text-[#172033]">
+
+            {/* Vehicle title */}
+            <h1
+              className="
+                font-['Oswald']
+                text-[32px]
+                leading-[1.05]
+                tracking-[-0.02em]
+                font-semibold
+              "
+              style={{
+                color: COLORS.navy,
+              }}
+            >
               {vehicle.name}
             </h1>
 
-            <div className="flex items-center gap-3 mt-3">
-              <p className="text-[28px] font-bold text-[#172033] leading-tight">
-                Rs. {vehicle.pricePerDay}
-                <span className="text-sm font-normal text-[#667085]"> / day</span>
-              </p>
-              <span
-                className={`inline-flex items-center px-2.5 py-1 rounded-[4px] text-[11px] font-medium uppercase ${
-                  isAvailable ? "bg-[#E5F3ED] text-[#3E8B73]" : "bg-[#FBEAEA] text-[#C75C5C]"
-                }`}
+            {/* Price + availability */}
+            <div className="flex items-center gap-[10px] mt-[10px]">
+
+              <div
+                className="
+                  text-[25px]
+                  leading-[30px]
+                  font-bold
+                "
+                style={{
+                  color: COLORS.navy,
+                }}
               >
-                {isAvailable ? "Available" : "Unavailable"}
+                Rs. {vehicle.pricePerDay}
+
+                <span
+                  className="
+                    text-[12px]
+                    font-normal
+                    ml-[3px]
+                  "
+                  style={{
+                    color: COLORS.muted,
+                  }}
+                >
+                  / day
+                </span>
+              </div>
+
+              <span
+                className="
+                  inline-flex
+                  items-center
+                  px-[9px]
+                  py-[4px]
+                  rounded-[4px]
+                  text-[10px]
+                  font-semibold
+                  uppercase
+                  tracking-[0.03em]
+                "
+                style={{
+                  backgroundColor: isAvailable
+                    ? COLORS.emeraldLight
+                    : "#FBEAEA",
+                  color: isAvailable
+                    ? COLORS.emerald
+                    : COLORS.danger,
+                }}
+              >
+                {isAvailable
+                  ? "Available"
+                  : "Unavailable"}
               </span>
             </div>
+
+            {/* Stock */}
             {isAvailable && (
-              <p className="text-[13px] text-[#667085] mt-1">
-                {vehicle.quantityAvailable} of {vehicle.quantityTotal} in stock
+              <p
+                className="text-[12px] mt-[2px]"
+                style={{
+                  color: COLORS.muted,
+                }}
+              >
+                {vehicle.quantityAvailable} of{" "}
+                {vehicle.quantityTotal} in stock
               </p>
             )}
 
-            <div className="border-t border-[#E5E1D8] mt-6 pt-6">
-              <form onSubmit={handleBooking} className="flex flex-col gap-4">
-                <div className="grid grid-cols-2 gap-3">
+            {/* =================================================
+                BOOKING SECTION
+            ================================================= */}
+            <div
+              className="
+                border-t
+                mt-[22px]
+                pt-[21px]
+              "
+              style={{
+                borderColor: COLORS.border,
+              }}
+            >
+              <form
+                onSubmit={handleBooking}
+                className="flex flex-col gap-[14px]"
+              >
+
+                {/* Pick-up / Return */}
+                <div className="grid grid-cols-2 gap-[12px]">
+
+                  {/* Pick-up */}
                   <div>
-                    <label className="block text-[10px] font-semibold uppercase tracking-[0.14em] text-[#667085] mb-2">
+                    <label
+                      className="
+                        block
+                        text-[10px]
+                        font-semibold
+                        uppercase
+                        tracking-[0.14em]
+                        mb-[7px]
+                      "
+                      style={{
+                        color: COLORS.muted,
+                      }}
+                    >
                       Pick-up
                     </label>
+
                     <input
                       type="date"
                       value={startDate}
-                      onChange={(e) => setStartDate(e.target.value)}
-                      min={new Date().toISOString().split("T")[0]}
+                      onChange={(e) =>
+                        setStartDate(e.target.value)
+                      }
+                      min={
+                        new Date()
+                          .toISOString()
+                          .split("T")[0]
+                      }
                       required
-                      className="w-full h-[48px] bg-[#F7F5EF] border border-[#E5E1D8] rounded-[4px] text-[#172033] px-3 text-sm focus:outline-none focus:border-[#C9A24D]"
+                      className="
+                        w-full
+                        h-[44px]
+                        rounded-[4px]
+                        px-[12px]
+                        text-[12px]
+                        focus:outline-none
+                        transition-colors
+                      "
+                      style={{
+                        backgroundColor:
+                          COLORS.input,
+                        border: `1px solid ${COLORS.border}`,
+                        color: COLORS.navy,
+                      }}
                     />
                   </div>
+
+                  {/* Return */}
                   <div>
-                    <label className="block text-[10px] font-semibold uppercase tracking-[0.14em] text-[#667085] mb-2">
+                    <label
+                      className="
+                        block
+                        text-[10px]
+                        font-semibold
+                        uppercase
+                        tracking-[0.14em]
+                        mb-[7px]
+                      "
+                      style={{
+                        color: COLORS.muted,
+                      }}
+                    >
                       Return
                     </label>
+
                     <input
                       type="date"
                       value={endDate}
-                      onChange={(e) => setEndDate(e.target.value)}
-                      min={startDate || new Date().toISOString().split("T")[0]}
+                      onChange={(e) =>
+                        setEndDate(e.target.value)
+                      }
+                      min={
+                        startDate ||
+                        new Date()
+                          .toISOString()
+                          .split("T")[0]
+                      }
                       required
-                      className="w-full h-[48px] bg-[#F7F5EF] border border-[#E5E1D8] rounded-[4px] text-[#172033] px-3 text-sm focus:outline-none focus:border-[#C9A24D]"
+                      className="
+                        w-full
+                        h-[44px]
+                        rounded-[4px]
+                        px-[12px]
+                        text-[12px]
+                        focus:outline-none
+                        transition-colors
+                      "
+                      style={{
+                        backgroundColor:
+                          COLORS.input,
+                        border: `1px solid ${COLORS.border}`,
+                        color: COLORS.navy,
+                      }}
                     />
                   </div>
                 </div>
 
-                {/* Quantity stepper — only when more than one unit exists */}
+                {/* Quantity */}
                 {showQuantityField && (
                   <div>
-                    <label className="block text-[10px] font-semibold uppercase tracking-[0.14em] text-[#667085] mb-2">
+                    <label
+                      className="
+                        block
+                        text-[10px]
+                        font-semibold
+                        uppercase
+                        tracking-[0.14em]
+                        mb-[7px]
+                      "
+                      style={{
+                        color: COLORS.muted,
+                      }}
+                    >
                       Number of vehicles
                     </label>
-                    <div className="flex items-center border border-[#E5E1D8] rounded-[4px] bg-[#F7F5EF] w-fit">
+
+                    <div
+                      className="
+                        inline-flex
+                        items-center
+                        rounded-[4px]
+                        overflow-hidden
+                      "
+                      style={{
+                        backgroundColor:
+                          COLORS.input,
+                        border: `1px solid ${COLORS.border}`,
+                      }}
+                    >
                       <button
                         type="button"
                         onClick={decrementQty}
-                        className="w-11 h-[48px] flex items-center justify-center text-[#172033] hover:bg-[#E5E1D8] transition-colors rounded-l-[4px]"
+                        className="
+                          w-[38px]
+                          h-[40px]
+                          flex
+                          items-center
+                          justify-center
+                          text-[18px]
+                          transition-colors
+                        "
+                        style={{
+                          color: COLORS.navy,
+                        }}
                       >
                         −
                       </button>
-                      <span className="w-12 h-[48px] flex items-center justify-center text-sm text-[#172033] border-x border-[#E5E1D8]">
+
+                      <span
+                        className="
+                          w-[42px]
+                          h-[40px]
+                          flex
+                          items-center
+                          justify-center
+                          text-[12px]
+                        "
+                        style={{
+                          color: COLORS.navy,
+                          borderLeft: `1px solid ${COLORS.border}`,
+                          borderRight: `1px solid ${COLORS.border}`,
+                        }}
+                      >
                         {quantity}
                       </span>
+
                       <button
                         type="button"
                         onClick={incrementQty}
-                        className="w-11 h-[48px] flex items-center justify-center text-[#172033] hover:bg-[#E5E1D8] transition-colors rounded-r-[4px]"
+                        className="
+                          w-[38px]
+                          h-[40px]
+                          flex
+                          items-center
+                          justify-center
+                          text-[18px]
+                        "
+                        style={{
+                          color: COLORS.navy,
+                        }}
                       >
                         +
                       </button>
@@ -222,75 +641,269 @@ const VehicleDetails = () => {
                   </div>
                 )}
 
-                {/* Rate breakdown */}
+                {/* Rental summary */}
                 {totalDays > 0 && (
-                  <div className="border-t border-[#E5E1D8] pt-4 flex flex-col gap-1.5 text-sm">
-                    <div className="flex items-center justify-between text-[#667085]">
+                  <div
+                    className="
+                      border-t
+                      pt-[12px]
+                      flex
+                      flex-col
+                      gap-[6px]
+                      text-[12px]
+                    "
+                    style={{
+                      borderColor: COLORS.border,
+                    }}
+                  >
+                    <div
+                      className="
+                        flex
+                        items-center
+                        justify-between
+                      "
+                      style={{
+                        color: COLORS.muted,
+                      }}
+                    >
                       <span>
-                        {totalDays} day{totalDays > 1 ? "s" : ""}
-                        {quantity > 1 ? ` × ${quantity} vehicles` : ""}
+                        {totalDays} day
+                        {totalDays > 1 ? "s" : ""}
+                        {quantity > 1
+                          ? ` × ${quantity} vehicles`
+                          : ""}
                       </span>
-                      <span>Rs. {rentalSubtotal}</span>
+
+                      <span>
+                        Rs. {rentalSubtotal}
+                      </span>
                     </div>
-                    <div className="flex items-center justify-between pt-2 mt-1 border-t border-[#E5E1D8] text-[#172033] font-semibold text-base">
-                      <span>Estimated total</span>
-                      <span>Rs. {rentalSubtotal}</span>
+
+                    <div
+                      className="
+                        flex
+                        items-center
+                        justify-between
+                        border-t
+                        pt-[8px]
+                        font-semibold
+                        text-[14px]
+                      "
+                      style={{
+                        borderColor: COLORS.border,
+                        color: COLORS.navy,
+                      }}
+                    >
+                      <span>
+                        Estimated total
+                      </span>
+
+                      <span>
+                        Rs. {rentalSubtotal}
+                      </span>
                     </div>
                   </div>
                 )}
 
+                {/* BOOK BUTTON */}
                 <button
                   type="submit"
-                  disabled={vehicle.quantityAvailable === 0}
-                  className="mt-1 bg-[#C9A24D] text-[#172033] h-[48px] rounded-[4px] text-[12px] font-semibold uppercase tracking-[0.1em] hover:brightness-95 transition-all disabled:opacity-50 disabled:hover:brightness-100"
+                  disabled={
+                    vehicle.quantityAvailable === 0
+                  }
+                  className="
+                    w-full
+                    h-[46px]
+                    rounded-[4px]
+                    text-[11px]
+                    font-semibold
+                    uppercase
+                    tracking-[0.12em]
+                    transition-all
+                    duration-200
+                    disabled:opacity-50
+                  "
+                  style={{
+                    backgroundColor:
+                      COLORS.emerald,
+                    color: "#FFFFFF",
+                  }}
+                  onMouseEnter={(e) => {
+                    if (
+                      vehicle.quantityAvailable > 0
+                    ) {
+                      e.currentTarget.style.backgroundColor =
+                        COLORS.emeraldDark;
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor =
+                      COLORS.emerald;
+                  }}
                 >
                   {vehicle.quantityAvailable === 0
                     ? "Currently Unavailable"
                     : "Book This Vehicle"}
                 </button>
 
-                {!token && vehicle.quantityAvailable > 0 && (
-                  <p className="text-[12px] text-[#667085] text-center -mt-1">
-                    You'll be asked to log in before confirming your booking.
-                  </p>
-                )}
+                {!token &&
+                  vehicle.quantityAvailable > 0 && (
+                    <p
+                      className="
+                        text-[11px]
+                        text-center
+                        -mt-[5px]
+                      "
+                      style={{
+                        color: COLORS.muted,
+                      }}
+                    >
+                      You'll be asked to log in
+                      before confirming your booking.
+                    </p>
+                  )}
               </form>
             </div>
           </div>
         </div>
 
-        {/* Description + vendor/location — full width below the hero */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 mt-10 pt-10 border-t border-[#E5E1D8]">
+        {/* =====================================================
+            INFORMATION BELOW VEHICLE
+        ===================================================== */}
+        <div
+          className="
+            grid
+            grid-cols-1
+            md:grid-cols-[1.1fr_0.9fr]
+            gap-[42px]
+            mt-[42px]
+            pt-[30px]
+            border-t
+          "
+          style={{
+            borderColor: COLORS.border,
+          }}
+        >
+
+          {/* About */}
           <div>
-            <h2 className="text-[13px] font-semibold uppercase tracking-[0.14em] text-[#344054] mb-2">
+            <h2
+              className="
+                text-[11px]
+                font-semibold
+                uppercase
+                tracking-[0.16em]
+                mb-[8px]
+              "
+              style={{
+                color: COLORS.navy,
+              }}
+            >
               About this vehicle
             </h2>
-            <p className="text-sm text-[#667085] leading-relaxed">{vehicle.description}</p>
+
+            <p
+              className="
+                text-[13px]
+                leading-[22px]
+              "
+              style={{
+                color: COLORS.muted,
+              }}
+            >
+              {vehicle.description}
+            </p>
           </div>
 
-          <div className="bg-white border border-[#E5E1D8] rounded-[8px] p-4 h-fit flex flex-col gap-2">
+          {/* Vendor + location */}
+          <div
+            className="
+              bg-white
+              border
+              rounded-[7px]
+              px-[16px]
+              py-[14px]
+              flex
+              flex-col
+              gap-[10px]
+              h-fit
+            "
+            style={{
+              borderColor: COLORS.border,
+            }}
+          >
+
+            {/* Vendor */}
             {vehicle.owner?.shopName && (
-              <div className="text-sm text-[#667085]">
+              <div
+                className="text-[12px]"
+                style={{
+                  color: COLORS.muted,
+                }}
+              >
                 Listed by{" "}
-                <span className="text-[#172033] font-medium">{vehicle.owner.shopName}</span>
+                <span
+                  className="font-medium"
+                  style={{
+                    color: COLORS.navy,
+                  }}
+                >
+                  {vehicle.owner.shopName}
+                </span>
               </div>
             )}
+
+            {/* Location */}
             {vehicle.location?.address && (
-              <div className="text-sm text-[#667085] flex items-start gap-1.5">
-                <svg width="14" height="14" viewBox="0 0 12 12" fill="none" className="mt-0.5 shrink-0">
+              <div
+                className="
+                  flex
+                  items-start
+                  gap-[8px]
+                  text-[12px]
+                  leading-[18px]
+                "
+                style={{
+                  color: COLORS.muted,
+                }}
+              >
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  className="mt-[1px] shrink-0"
+                >
                   <path
-                    d="M6 0.75C3.79 0.75 2 2.54 2 4.75c0 3 4 6.5 4 6.5s4-3.5 4-6.5c0-2.21-1.79-4-4-4z"
-                    stroke="#C9A24D"
-                    strokeWidth="1"
+                    d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z"
+                    stroke={COLORS.emerald}
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
                   />
-                  <circle cx="6" cy="4.75" r="1.3" stroke="#C9A24D" strokeWidth="1" />
+
+                  <circle
+                    cx="12"
+                    cy="10"
+                    r="2.5"
+                    stroke={COLORS.emerald}
+                    strokeWidth="2"
+                  />
                 </svg>
-                <span>Pickup at {vehicle.location.address}</span>
+
+                <span>
+                  Pickup at {vehicle.location.address}
+                </span>
               </div>
             )}
           </div>
         </div>
       </div>
+
+      {/* =====================================================
+          POPULAR VEHICLES
+      ====================================================== */}
+      <PopularVehicles vehicles={popularVehicles} />
     </div>
   );
 };

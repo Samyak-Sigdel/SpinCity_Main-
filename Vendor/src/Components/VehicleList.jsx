@@ -1,4 +1,4 @@
-// VehicleList.jsx — Edit button widened + softer gold
+// VehicleList.jsx
 import React, { useContext, useEffect, useState, useMemo } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -6,9 +6,9 @@ import { VendorContext } from "../Context/VendorContext";
 import EditVehicleModal from "./EditVehicleModal";
 
 const statusTextStyles = {
-  Available: "text-[#3E8B73]",
-  Rented: "text-[#667085]",
-  Maintenance: "text-[#BFA05A]",
+  Available: "text-[#145A4A]",
+  Rented: "text-[#64748B]",
+  Maintenance: "text-[#8A5B10]",
   Inactive: "text-[#C75C5C]",
 };
 
@@ -86,7 +86,7 @@ const VehicleList = ({ refreshKey, searchTerm = "", statusFilter = "All", onChan
 
   if (loading) {
     return (
-      <p className="text-sm text-[#667085] uppercase tracking-[0.15em]">
+      <p className="text-sm text-[#64748B] uppercase tracking-[0.15em]">
         Loading your vehicles...
       </p>
     );
@@ -94,8 +94,8 @@ const VehicleList = ({ refreshKey, searchTerm = "", statusFilter = "All", onChan
 
   if (vehicles.length === 0) {
     return (
-      <div className="border border-dashed border-[#E5E1D8] rounded-lg bg-white py-16 px-6 text-center">
-        <p className="text-[#667085] text-sm">
+      <div className="border border-dashed border-[#E5E2D9] rounded-lg bg-white py-16 px-6 text-center">
+        <p className="text-[#64748B] text-sm">
           You haven't listed any vehicles yet. Add your first one to get started.
         </p>
       </div>
@@ -104,15 +104,15 @@ const VehicleList = ({ refreshKey, searchTerm = "", statusFilter = "All", onChan
 
   if (filteredVehicles.length === 0) {
     return (
-      <div className="border border-dashed border-[#E5E1D8] rounded-lg bg-white py-16 px-6 text-center">
-        <p className="text-[#667085] text-sm">No vehicles match your search or filter.</p>
+      <div className="border border-dashed border-[#E5E2D9] rounded-lg bg-white py-16 px-6 text-center">
+        <p className="text-[#64748B] text-sm">No vehicles match your search or filter.</p>
       </div>
     );
   }
 
   return (
     <>
-      <div className="border border-[#E5E1D8] bg-white rounded-lg shadow-[0_2px_8px_rgba(23,32,51,0.06)] divide-y divide-[#E5E1D8]">
+      <div className="border border-[#E5E2D9] bg-white rounded-lg shadow-[0_2px_8px_rgba(20,32,51,0.06)] divide-y divide-[#E5E2D9]">
         {filteredVehicles.map((vehicle) => (
           <div
             key={vehicle._id}
@@ -124,27 +124,27 @@ const VehicleList = ({ refreshKey, searchTerm = "", statusFilter = "All", onChan
                 <span
                   className={`text-[9px] font-semibold uppercase tracking-[0.15em] px-2 py-1 rounded border ${
                     vehicle.isApproved
-                      ? "border-[#3E8B73]/30 text-[#3E8B73] bg-[#E5F3ED]"
-                      : "border-[#BFA05A]/40 text-[#9C7F3F] bg-[#F3ECDA]"
+                      ? "border-[#145A4A]/30 text-[#145A4A] bg-[#EDF5F1]"
+                      : "border-[#D9A441]/40 text-[#8A5B10] bg-[#FBF1DE]"
                   }`}
                 >
                   {vehicle.isApproved ? "Live" : "Pending Approval"}
                 </span>
                 {vehicle.isApproved && !vehicle.isVisible && (
-                  <span className="text-[9px] font-semibold uppercase tracking-[0.15em] px-2 py-1 rounded border border-[#E5E1D8] text-[#667085] bg-[#F7F5EF]">
+                  <span className="text-[9px] font-semibold uppercase tracking-[0.15em] px-2 py-1 rounded border border-[#E5E2D9] text-[#64748B] bg-[#F8F7F2]">
                     Hidden from customers
                   </span>
                 )}
               </div>
 
-              <h3 className="font-serif text-lg text-[#172033] truncate">{vehicle.name}</h3>
-              <p className="text-[11px] uppercase tracking-[0.18em] text-[#667085] mt-1">
+              <h3 className="font-serif text-lg text-[#142033] truncate">{vehicle.name}</h3>
+              <p className="text-[11px] uppercase tracking-[0.18em] text-[#64748B] mt-1">
                 {vehicle.category}
               </p>
 
-              <p className="text-xs text-[#667085] mt-3">
+              <p className="text-xs text-[#64748B] mt-3">
                 {vehicle.quantityAvailable}/{vehicle.quantityTotal} available
-                <span className="mx-2 text-[#E5E1D8]">·</span>
+                <span className="mx-2 text-[#E5E2D9]">·</span>
                 <span className={statusTextStyles[vehicle.status] || statusTextStyles.Available}>
                   {vehicle.status}
                 </span>
@@ -152,30 +152,30 @@ const VehicleList = ({ refreshKey, searchTerm = "", statusFilter = "All", onChan
             </div>
 
             {/* Thumbnail */}
-            <div className="order-1 sm:order-2 w-full h-40 sm:w-28 sm:h-32 bg-[#F7F5EF] rounded-lg shrink-0 overflow-hidden">
+            <div className="order-1 sm:order-2 w-full h-40 sm:w-28 sm:h-32 bg-[#F8F7F2] rounded-lg shrink-0 overflow-hidden">
               <img src={vehicle.image} alt={vehicle.name} className="w-full h-full object-cover" />
             </div>
 
             {/* Divider — desktop only */}
-            <div className="hidden sm:block w-px self-stretch bg-[#E5E1D8] order-3" />
+            <div className="hidden sm:block w-px self-stretch bg-[#E5E2D9] order-3" />
 
             {/* Price + actions */}
             <div className="order-4 sm:w-44 shrink-0 flex sm:flex-col sm:items-end items-center justify-between gap-4">
               <div className="sm:text-right">
-                <span className="font-serif text-xl text-[#172033]">Rs. {vehicle.pricePerDay}</span>
-                <span className="text-[#667085] text-sm">/day</span>
+                <span className="font-serif text-xl text-[#142033]">Rs. {vehicle.pricePerDay}</span>
+                <span className="text-[#64748B] text-sm">/day</span>
               </div>
 
               <div className="flex sm:flex-col items-center sm:items-end gap-3">
                 <button
                   onClick={() => setEditingVehicle(vehicle)}
-                  className="h-[38px] w-[112px] flex items-center justify-center border border-[#BFA05A] rounded text-[#9C7F3F] text-[11px] font-semibold uppercase tracking-[0.15em] hover:bg-[#F3ECDA] transition-colors"
+                  className="h-[38px] w-[112px] flex items-center justify-center border border-[#145A4A] rounded text-[#145A4A] text-[11px] font-semibold uppercase tracking-[0.15em] hover:bg-[#EDF5F1] transition-colors"
                 >
                   Edit
                 </button>
 
                 <label className="flex items-center gap-2 cursor-pointer select-none">
-                  <span className="text-[9px] uppercase tracking-[0.15em] text-[#667085] sm:order-1">
+                  <span className="text-[9px] uppercase tracking-[0.15em] text-[#64748B] sm:order-1">
                     {vehicle.isVisible ? "Visible" : "Hidden"}
                   </span>
                   <button
@@ -185,7 +185,7 @@ const VehicleList = ({ refreshKey, searchTerm = "", statusFilter = "All", onChan
                     disabled={togglingId === vehicle._id}
                     onClick={() => handleToggleVisibility(vehicle)}
                     className={`relative w-10 h-[22px] shrink-0 rounded-full transition-colors disabled:opacity-50 sm:order-2 ${
-                      vehicle.isVisible ? "bg-[#BFA05A]" : "bg-[#E5E1D8]"
+                      vehicle.isVisible ? "bg-[#145A4A]" : "bg-[#E5E2D9]"
                     }`}
                   >
                     <span

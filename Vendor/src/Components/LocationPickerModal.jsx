@@ -140,13 +140,13 @@ const LocationPickerModal = ({ isOpen, onClose, onConfirm, initialAddress = "" }
   };
 
   return (
-    <div className="fixed inset-0 z-[999] bg-[#172033]/50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg w-full max-w-xl overflow-hidden flex flex-col max-h-[90vh] shadow-[0_8px_24px_rgba(23,32,51,0.10)]">
-        <div className="px-5 py-4 border-b border-[#E5E1D8] flex items-center justify-between">
-          <h2 className="font-serif text-lg text-[#172033]">
+    <div className="fixed inset-0 z-[999] bg-[#142033]/50 flex items-center justify-center p-4">
+      <div className="bg-white rounded-lg w-full max-w-xl overflow-hidden flex flex-col max-h-[90vh] shadow-[0_8px_24px_rgba(20,32,51,0.10)]">
+        <div className="px-5 py-4 border-b border-[#E5E2D9] flex items-center justify-between">
+          <h2 className="font-serif text-lg text-[#142033]">
             Set pickup location
           </h2>
-          <button onClick={onClose} className="text-[#667085] hover:text-[#172033]" aria-label="Close">
+          <button onClick={onClose} className="text-[#64748B] hover:text-[#142033]" aria-label="Close">
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
               <path d="M5 5l10 10M15 5L5 15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
             </svg>
@@ -154,7 +154,7 @@ const LocationPickerModal = ({ isOpen, onClose, onConfirm, initialAddress = "" }
         </div>
 
         <div className="px-5 pt-4 relative">
-          <label className="block text-[11px] font-semibold uppercase tracking-wide text-[#667085] mb-1">
+          <label className="block text-[11px] font-semibold uppercase tracking-wide text-[#64748B] mb-1">
             Location
           </label>
           <input
@@ -162,14 +162,14 @@ const LocationPickerModal = ({ isOpen, onClose, onConfirm, initialAddress = "" }
             onChange={handleQueryChange}
             onFocus={() => query.length >= 3 && setShowSuggestions(true)}
             placeholder="Search for an address, city, or landmark"
-            className="w-full bg-[#F7F5EF] border border-[#E5E1D8] rounded px-4 py-3 text-sm text-[#172033] focus:outline-none focus:border-[#BFA05A] focus:bg-white transition-colors"
+            className="w-full bg-[#F8F7F2] border border-[#E5E2D9] rounded px-4 py-3 text-sm text-[#142033] focus:outline-none focus:border-[#145A4A] focus:bg-white transition-colors"
           />
 
           {showSuggestions && query.length >= 3 && (
-            <div className="absolute left-5 right-5 top-full mt-1 bg-white border border-[#E5E1D8] rounded shadow-[0_8px_24px_rgba(23,32,51,0.10)] z-10 max-h-56 overflow-y-auto">
-              {searching && <p className="px-4 py-3 text-xs text-[#667085]">Searching...</p>}
+            <div className="absolute left-5 right-5 top-full mt-1 bg-white border border-[#E5E2D9] rounded shadow-[0_8px_24px_rgba(20,32,51,0.10)] z-10 max-h-56 overflow-y-auto">
+              {searching && <p className="px-4 py-3 text-xs text-[#64748B]">Searching...</p>}
               {!searching && suggestions.length === 0 && (
-                <p className="px-4 py-3 text-xs text-[#667085]">No locations found</p>
+                <p className="px-4 py-3 text-xs text-[#64748B]">No locations found</p>
               )}
               {!searching &&
                 suggestions.map((place) => (
@@ -177,11 +177,11 @@ const LocationPickerModal = ({ isOpen, onClose, onConfirm, initialAddress = "" }
                     key={place.place_id}
                     type="button"
                     onClick={() => selectSuggestion(place)}
-                    className="w-full text-left px-4 py-3 text-sm text-[#172033] hover:bg-[#F7F5EF] border-b border-[#E5E1D8] last:border-b-0 flex items-start gap-2"
+                    className="w-full text-left px-4 py-3 text-sm text-[#142033] hover:bg-[#F8F7F2] border-b border-[#E5E2D9] last:border-b-0 flex items-start gap-2"
                   >
                     <svg width="14" height="14" viewBox="0 0 12 12" fill="none" className="mt-0.5 shrink-0">
-                      <path d="M6 0.75C3.79 0.75 2 2.54 2 4.75c0 3 4 6.5 4 6.5s4-3.5 4-6.5c0-2.21-1.79-4-4-4z" stroke="#667085" strokeWidth="1" />
-                      <circle cx="6" cy="4.75" r="1.3" stroke="#667085" strokeWidth="1" />
+                      <path d="M6 0.75C3.79 0.75 2 2.54 2 4.75c0 3 4 6.5 4 6.5s4-3.5 4-6.5c0-2.21-1.79-4-4-4z" stroke="#64748B" strokeWidth="1" />
+                      <circle cx="6" cy="4.75" r="1.3" stroke="#64748B" strokeWidth="1" />
                     </svg>
                     {place.display_name}
                   </button>
@@ -195,22 +195,22 @@ const LocationPickerModal = ({ isOpen, onClose, onConfirm, initialAddress = "" }
             type="button"
             onClick={useCurrentLocation}
             disabled={locating}
-            className="flex items-center gap-2 px-4 py-2.5 rounded bg-[#F7F5EF] border border-[#E5E1D8] text-sm font-medium text-[#172033] hover:border-[#BFA05A] transition-colors disabled:opacity-60"
+            className="flex items-center gap-2 px-4 py-2.5 rounded bg-[#F8F7F2] border border-[#E5E2D9] text-sm font-medium text-[#142033] hover:border-[#145A4A] transition-colors disabled:opacity-60"
           >
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <circle cx="8" cy="8" r="2" fill="#172033" />
-              <circle cx="8" cy="8" r="6" stroke="#172033" strokeWidth="1.3" />
-              <path d="M8 0v2.5M8 13.5V16M0 8h2.5M13.5 8H16" stroke="#172033" strokeWidth="1.3" />
+              <circle cx="8" cy="8" r="2" fill="#142033" />
+              <circle cx="8" cy="8" r="6" stroke="#142033" strokeWidth="1.3" />
+              <path d="M8 0v2.5M8 13.5V16M0 8h2.5M13.5 8H16" stroke="#142033" strokeWidth="1.3" />
             </svg>
             {locating ? "Locating..." : "Use Current Location"}
           </button>
         </div>
 
         <div className="px-5 py-4 flex-1 min-h-0">
-          <p className="text-[11px] font-semibold uppercase tracking-wide text-[#667085] mb-2">
+          <p className="text-[11px] font-semibold uppercase tracking-wide text-[#64748B] mb-2">
             Or click on the map to drop a pin
           </p>
-          <div className="h-64 rounded overflow-hidden border border-[#E5E1D8]">
+          <div className="h-64 rounded overflow-hidden border border-[#E5E2D9]">
             <MapContainer
               center={position || DEFAULT_CENTER}
               zoom={position ? 15 : 12}
@@ -228,14 +228,14 @@ const LocationPickerModal = ({ isOpen, onClose, onConfirm, initialAddress = "" }
           </div>
         </div>
 
-        <div className="px-5 py-4 border-t border-[#E5E1D8] flex items-center justify-between gap-4">
-          <p className="text-xs text-[#667085] truncate">
+        <div className="px-5 py-4 border-t border-[#E5E2D9] flex items-center justify-between gap-4">
+          <p className="text-xs text-[#64748B] truncate">
             {address || "No location selected yet"}
           </p>
           <button
             onClick={handleConfirm}
             disabled={!position}
-            className="shrink-0 px-6 py-2.5 rounded bg-[#BFA05A] text-[#172033] text-sm font-semibold tracking-wide hover:bg-[#AC8D48] transition-colors disabled:opacity-40"
+            className="shrink-0 px-6 py-2.5 rounded bg-[#145A4A] text-white text-sm font-semibold tracking-wide hover:bg-[#0D3F35] transition-colors disabled:opacity-40"
           >
             Continue
           </button>
